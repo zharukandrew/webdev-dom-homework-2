@@ -58,7 +58,7 @@ function getSafeHtmlString(inputStr) {
 
 
 function validationForm() {
-  if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
+  if (valueInputName.trim() !== "" || valueInputText.trim() !== "") {
     addFormButton.disabled = false;
     addFormButton.classList.remove("grey");
   } else {
@@ -127,9 +127,7 @@ function addComment() {
       likes: 0,
       liked: false,
     };
-    
-
-// ------------------------ Запрос ------------------------------------------------
+//----------------------------------Запрос--------------------------------------
     fetch("https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments", {
       method: "POST",
       headers: {
@@ -138,8 +136,11 @@ function addComment() {
       body: JSON.stringify(newComment),
     });
 
-    getData()
-// ------------------------ / Запрос ------------------------------------------------
+    // Simulate a delay of 2 seconds before calling getData()
+    setTimeout(() => {
+      getData();
+    }, 2000);
+
     clearForm();
     disabledBtn();
   }
@@ -195,7 +196,9 @@ function uberComments(e) {
   }
   return;
 }
-
+document.querySelectorAll(".comment").forEach((comment) => {
+  comment.addEventListener("click", uberComments);
+});
 function deleteComment() {
   comments.pop();
   renderComments();
@@ -280,8 +283,9 @@ commentInput.addEventListener("input", (e) => {
   valueInputText = e.target.value;
   validationForm();
 });
-addFormButton.addEventListener("click", function () {
-  addComment();
+addFormButton.addEventListener("click", function (event) {
+  addComment(event);
   renderComments();
 });
+
 // ------------------------------------ / Слушатели ------------------------------------------------------------------
