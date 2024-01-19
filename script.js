@@ -117,7 +117,7 @@ getData();
 
 // ---------------------------------- Логика по работе с комментариями ---------------------------------------
 function addComment() {
-  if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
+  if (valueInputName.trim() !== "" || valueInputText.trim() !== "") {
     const newComment = {
       id: Date.now(),
       date: getCurrentDate(),
@@ -134,12 +134,17 @@ function addComment() {
         "Content-Type": "application/activity+json",
       },
       body: JSON.stringify(newComment),
-    });
+    })
 
     // Simulate a delay of 2 seconds before calling getData()
-    setTimeout(() => {
+    .then(response => {
+      // Обработка результата post-запроса
+      // Выполнение действий после успешного запроса
       getData();
-    }, 2000);
+    })
+    .catch(error => {
+      // Обработка ошибки post-запроса
+    });
 
     clearForm();
     disabledBtn();
