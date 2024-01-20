@@ -107,7 +107,24 @@ body {
     width: 22px;
     height: 22px;
   }
+  @keyframes rotating {
+    from {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(30deg);;
+    }
+    75% {
+      transform: rotate(-30deg);;
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
 
+  .like-button {
+    animation: rotating 2s linear infinite;
+  }
 
 
   .add-form {

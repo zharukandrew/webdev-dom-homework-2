@@ -58,12 +58,19 @@ function getSafeHtmlString(inputStr) {
 
 
 function validationForm() {
-  if (valueInputName.trim() !== "" || valueInputText.trim() !== "") {
+  if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
     addFormButton.disabled = false;
     addFormButton.classList.remove("grey");
   } else {
     disabledBtn();
   }
+}
+function delay(time){
+  return new Promise((resolve,rejected) => {
+    setTimeout(() => {
+      resolve()
+    },time)
+  })
 }
 // -------------------------------- / Вспомогательные функции --------------------------------------------
 
@@ -117,7 +124,7 @@ getData();
 
 // ---------------------------------- Логика по работе с комментариями ---------------------------------------
 function addComment() {
-  if (valueInputName.trim() !== "" || valueInputText.trim() !== "") {
+  if (valueInputName.trim() !== "" & valueInputText.trim() !== "") {
     const newComment = {
       id: Date.now(),
       date: getCurrentDate(),
@@ -137,13 +144,14 @@ function addComment() {
     })
 
     // Simulate a delay of 2 seconds before calling getData()
-    .then(response => {
+    .then((response) => {
       // Обработка результата post-запроса
       // Выполнение действий после успешного запроса
       getData();
     })
-    .catch(error => {
+    .catch((error) => {
       // Обработка ошибки post-запроса
+      console.log('Error')
     });
 
     clearForm();
@@ -181,23 +189,28 @@ function saveComment(e) {
 function likesComment(e) {
   e.stopPropagation();
   let id = parseInt(e.target.id);
-  comments = comments.map((comment) => {
-    if (comment.id === id && comment.liked === false) {
-      return { ...comment, liked: !comment.liked, likes: 1 };
-    } else if (comment.id === id && comment.liked === true) {
-      return { ...comment, liked: !comment.liked, likes: 0 };
-    } else {
-      return comment;
-    }
-  });
-  renderComments();
+ 
+  delay(1000).then(()=>{
+    comments = comments.map((comment) => {
+      if (comment.id === id && comment.liked === false) {
+        return { ...comment, liked: !comment.liked, likes: 1 };
+      } else if (comment.id === id && comment.liked === true) {
+        return { ...comment, liked: !comment.liked, likes: 0 };
+      } else {
+        return comment;
+      }
+    });
+    renderComments();
+  })
 }
 
 function uberComments(e) {
   if (e.target.classList.contains("comment")) {
     let id = Number(e.target.id);
     let com = comments.find((comment) => comment.id === id);
-    commentInput.value = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`;
+    let text = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`
+    commentInput.value = text;
+    valueInputText =  text;
   }
   return;
 }
@@ -293,4 +306,5 @@ addFormButton.addEventListener("click", function (event) {
   renderComments();
 });
 
-// ------------------------------------ / Слушатели ------------------------------------------------------------------
+// ------------------------------------ / Слушатели ------------------------------------------------------------------      
+
