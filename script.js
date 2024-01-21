@@ -14,7 +14,6 @@ let valueInputText = "";
 let isLoad = false;
 // --------------------------------- // Переменные --------------------------------------------------------
 
-
 // -------------------------------- Вспомогательные функции --------------------------------------------
 function showForm (flag) {
    if (flag) {
@@ -41,13 +40,22 @@ function clearForm() {
 }
 
 
+// function getCurrentDate() {
+//   const currentDate = new Date();
+//   return `${currentDate.getDate()}.${
+//     currentDate.getMonth() + 1
+//   }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+// }
 function getCurrentDate() {
   const currentDate = new Date();
-  return `${currentDate.getDate()}.${
-    currentDate.getMonth() + 1
-  }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-}
+  const day = currentDate.getDate().toString().padStart(2, '0');
+  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+  const year = currentDate.getFullYear();
+  const hours = currentDate.getHours().toString().padStart(2, '0');
+  const minutes = currentDate.getMinutes().toString().padStart(2, '0');
 
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
 function getSafeHtmlString(inputStr) {
   return inputStr
     .replaceAll("&", "&amp;")
@@ -55,7 +63,6 @@ function getSafeHtmlString(inputStr) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
 }
-
 
 function validationForm() {
   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
@@ -74,12 +81,11 @@ function delay(time){
 }
 // -------------------------------- / Вспомогательные функции --------------------------------------------
 
-
 // --------------------------------- Запросы -------------------------------------------------------------
-const getData = async () => {
-  isLoad = true
-  showForm(isLoad)
 
+const getData = async () => {
+  isLoad = true;
+  showForm(isLoad);
   try {
     let response = await fetch(
       "https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments",
@@ -90,7 +96,10 @@ const getData = async () => {
         },
       }
     );
-    if (response.ok) {
+    if (!response.ok) {
+      
+      
+    } else {
       response.json().then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
           return {
@@ -103,31 +112,29 @@ const getData = async () => {
             liked: comment.isLiked,
           };
         });
-
         comments = appComments;
         renderComments();
-
-        isLoad = false
-        showForm(isLoad)
-    
+        isLoad = false;
+        showForm(isLoad);
       });
-    } else {
-      console.error("Error adding comment:", response.status);
     }
   } catch (error) {
     console.error("Error adding comment:", error);
   }
 };
+
 getData();
+
+
 // --------------------------------- //Запросы -------------------------------------------------------------
 
-
 // ---------------------------------- Логика по работе с комментариями ---------------------------------------
+
 function addComment() {
   if (valueInputName.trim() !== "" & valueInputText.trim() !== "") {
     const newComment = {
       id: Date.now(),
-      date: getCurrentDate(),
+      date: getCurrentDate().toLocaleString('ru-RU'),
       name: getSafeHtmlString(valueInputName),
       text: getSafeHtmlString(valueInputText),
       isEdit: false,
@@ -142,7 +149,6 @@ function addComment() {
       },
       body: JSON.stringify(newComment),
     })
-
     // Simulate a delay of 2 seconds before calling getData()
     .then((response) => {
       // Обработка результата post-запроса
@@ -153,12 +159,10 @@ function addComment() {
       // Обработка ошибки post-запроса
       console.log('Error')
     });
-
     clearForm();
     disabledBtn();
   }
 }
-
 function editComment(e) {
   e.stopPropagation();
   let id = Number(e.target.id);
@@ -186,11 +190,15 @@ function saveComment(e) {
   renderComments();
 }
 
+
 function likesComment(e) {
   e.stopPropagation();
   let id = parseInt(e.target.id);
- 
-  delay(1000).then(()=>{
+  const likeButton = e.target;
+  // Добавляем класс анимации только на момент отправки лайка
+  likeButton.classList.toggle('animated');
+
+  delay(1000).then(() => {
     comments = comments.map((comment) => {
       if (comment.id === id && comment.liked === false) {
         return { ...comment, liked: !comment.liked, likes: 1 };
@@ -201,9 +209,11 @@ function likesComment(e) {
       }
     });
     renderComments();
-  })
-}
 
+    // Удаляем класс анимации после завершения операции
+    
+  });
+}
 function uberComments(e) {
   if (e.target.classList.contains("comment")) {
     let id = Number(e.target.id);
@@ -228,7 +238,6 @@ function handleEnterKey(e) {
   }
 }
 // ---------------------------------- / Логика по работе с комментариями ---------------------------------------
-
 
 // ------------------------------------ Рендер списка комментариев -------------------------------------------
 function renderComments() {
@@ -288,19 +297,23 @@ function renderComments() {
 // ------------------------------------ / Обновление слушателей -----------------------------------------------------
 // ------------------------------------ / Рендер списка комментариев ------------------------------------------------
 
-
 // ------------------------------------ Слушатели ------------------------------------------------------------------
 addFormButton.addEventListener("click", addComment);
 form.addEventListener("keyup", handleEnterKey);
 buttonDelete.addEventListener("click", deleteComment);
-nameInput.addEventListener("input", (e) => {
+
+const handleNameInput = (e) => {
   valueInputName = e.target.value;
   validationForm();
-});
-commentInput.addEventListener("input", (e) => {
+};
+
+const handleCommentInput = (e) => {
   valueInputText = e.target.value;
   validationForm();
-});
+};
+
+nameInput.addEventListener("input", handleNameInput);
+commentInput.addEventListener("input", handleCommentInput);
 addFormButton.addEventListener("click", function (event) {
   addComment(event);
   renderComments();
