@@ -48,14 +48,16 @@ function clearForm() {
 // }
 function getCurrentDate() {
   const currentDate = new Date();
-  const day = currentDate.getDate().toString().padStart(2, '0');
-  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-  const year = currentDate.getFullYear();
-  const hours = currentDate.getHours().toString().padStart(2, '0');
-  const minutes = currentDate.getMinutes().toString().padStart(2, '0');
+  return currentDate.toLocaleString('ru-RU', {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric'
+  })};
 
-  return `${day}.${month}.${year} ${hours}:${minutes}`;
-}
+
+
 function getSafeHtmlString(inputStr) {
   return inputStr
     .replaceAll("&", "&amp;")
@@ -134,13 +136,14 @@ function addComment() {
   if (valueInputName.trim() !== "" & valueInputText.trim() !== "") {
     const newComment = {
       id: Date.now(),
-      date: getCurrentDate().toLocaleString('ru-RU'),
+      date: getCurrentDate(new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })),
       name: getSafeHtmlString(valueInputName),
       text: getSafeHtmlString(valueInputText),
       isEdit: false,
       likes: 0,
       liked: false,
     };
+   
 //----------------------------------Запрос--------------------------------------
     fetch("https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments", {
       method: "POST",
@@ -237,6 +240,7 @@ function handleEnterKey(e) {
     addComment();
   }
 }
+
 // ---------------------------------- / Логика по работе с комментариями ---------------------------------------
 
 // ------------------------------------ Рендер списка комментариев -------------------------------------------
@@ -294,6 +298,8 @@ function renderComments() {
     .querySelectorAll(".comment")
     .forEach((comment) => comment.addEventListener("click", uberComments));
 }
+
+
 // ------------------------------------ / Обновление слушателей -----------------------------------------------------
 // ------------------------------------ / Рендер списка комментариев ------------------------------------------------
 
