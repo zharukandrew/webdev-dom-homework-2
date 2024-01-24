@@ -6,7 +6,7 @@ const commentsList = document.querySelector(".comments");
 const nameInput = document.querySelector(".add-form-name");
 const commentInput = document.querySelector(".add-form-text");
 const form = document.querySelector(".add-form");
-const gif = document.querySelector('.gif');
+const gif = document.querySelector(".gif");
 
 let valueInputName = "";
 let valueInputText = "";
@@ -15,14 +15,14 @@ let isLoad = false;
 // --------------------------------- // Переменные --------------------------------------------------------
 
 // -------------------------------- Вспомогательные функции --------------------------------------------
-function showForm (flag) {
-   if (flag) {
-     gif.classList.add('gif_gif-show')
-     form.classList.add('form-add_form-add-none')
-   } else {
-     gif.classList.remove('gif_gif-show')
-     form.classList.remove('form-add_form-add-none')
-   }
+function showForm(flag) {
+  if (flag) {
+    gif.classList.add("gif_gif-show");
+    form.classList.add("form-add_form-add-none");
+  } else {
+    gif.classList.remove("gif_gif-show");
+    form.classList.remove("form-add_form-add-none");
+  }
 }
 
 function disabledBtn() {
@@ -39,24 +39,24 @@ function clearForm() {
   valueInputText = "";
 }
 
-
-// function getCurrentDate() {
-//   const currentDate = new Date();
-//   return `${currentDate.getDate()}.${
-//     currentDate.getMonth() + 1
-//   }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-// }
 function getCurrentDate() {
   const currentDate = new Date();
-  return currentDate.toLocaleString('ru-RU', {
-    day: 'numeric',
-    month: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric'
-  })};
+  return `${currentDate.getDate()}.${
+    currentDate.getMonth() + 1
+  }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+}
 
-
+function formDate(data) {
+  return new Date(data)
+    .toLocaleString("ru-RU", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    })
+    .replace(",", "");
+}
 
 function getSafeHtmlString(inputStr) {
   return inputStr
@@ -74,12 +74,12 @@ function validationForm() {
     disabledBtn();
   }
 }
-function delay(time){
-  return new Promise((resolve,rejected) => {
+function delay(time) {
+  return new Promise((resolve, rejected) => {
     setTimeout(() => {
-      resolve()
-    },time)
-  })
+      resolve();
+    }, time);
+  });
 }
 // -------------------------------- / Вспомогательные функции --------------------------------------------
 
@@ -99,27 +99,24 @@ const getData = async () => {
       }
     );
     if (!response.ok) {
-      
-      
-    } else {
-      response.json().then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            id: comment.id,
-            date: comment.date,
-            name: comment.author.name,
-            text: comment.text,
-            isEdit: false,
-            likes: comment.likes,
-            liked: comment.isLiked,
-          };
-        });
-        comments = appComments;
-        renderComments();
-        isLoad = false;
-        showForm(isLoad);
-      });
+      throw new Error("ошибка");
     }
+    let responseData = await response.json();
+    const appComments = responseData.comments.map((comment) => {
+      return {
+        id: comment.id,
+        date: formDate(comment.date),
+        name: comment.author.name,
+        text: comment.text,
+        isEdit: false,
+        likes: comment.likes,
+        liked: comment.isLiked,
+      };
+    });
+    comments = appComments;
+    renderComments();
+    isLoad = false;
+    showForm(isLoad);
   } catch (error) {
     console.error("Error adding comment:", error);
   }
@@ -127,24 +124,7 @@ const getData = async () => {
 
 getData();
 
-
-// --------------------------------- //Запросы -------------------------------------------------------------
-
-// ---------------------------------- Логика по работе с комментариями ---------------------------------------
-
-function addComment() {
-  if (valueInputName.trim() !== "" & valueInputText.trim() !== "") {
-    const newComment = {
-      id: Date.now(),
-      date: getCurrentDate(new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })),
-      name: getSafeHtmlString(valueInputName),
-      text: getSafeHtmlString(valueInputText),
-      isEdit: false,
-      likes: 0,
-      liked: false,
-    };
-   
-//----------------------------------Запрос--------------------------------------
+function PostComment(newComment) {
     fetch("https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments", {
       method: "POST",
       headers: {
@@ -152,20 +132,46 @@ function addComment() {
       },
       body: JSON.stringify(newComment),
     })
-    // Simulate a delay of 2 seconds before calling getData()
-    .then((response) => {
-      // Обработка результата post-запроса
-      // Выполнение действий после успешного запроса
-      getData();
-    })
-    .catch((error) => {
-      // Обработка ошибки post-запроса
-      console.log('Error')
-    });
-    clearForm();
-    disabledBtn();
+      .then((response) => {
+        if (response.status === 400) {
+          throw new Error("Данные должны быть не короче 3 символов");
+        }
+        if (response.status === 500) {
+          throw new Error("Упал сервер");
+        }
+        clearForm();
+        disabledBtn();
+        getData();
+      })
+      .catch((error) => {
+        alert(error);
+      });
   }
-}
+  
+
+// --------------------------------- //Запросы -------------------------------------------------------------
+
+// ---------------------------------- Логика по работе с комментариями ---------------------------------------
+
+
+function addComment() {
+    if ((valueInputName.trim() !== "") & (valueInputText.trim() !== "")) {
+      const newComment = {
+        id: Date.now(),
+        date: getCurrentDate(),
+        name: getSafeHtmlString(valueInputName),
+        text: getSafeHtmlString(valueInputText),
+        isEdit: false,
+        likes: 0,
+        liked: false,
+      };
+      PostComment(newComment);
+      clearForm();
+      disabledBtn();
+      getData();
+    }
+  }
+
 function editComment(e) {
   e.stopPropagation();
   let id = Number(e.target.id);
@@ -193,13 +199,12 @@ function saveComment(e) {
   renderComments();
 }
 
-
 function likesComment(e) {
   e.stopPropagation();
   let id = parseInt(e.target.id);
   const likeButton = e.target;
   // Добавляем класс анимации только на момент отправки лайка
-  likeButton.classList.toggle('animated');
+  likeButton.classList.toggle("animated");
 
   delay(1000).then(() => {
     comments = comments.map((comment) => {
@@ -214,16 +219,15 @@ function likesComment(e) {
     renderComments();
 
     // Удаляем класс анимации после завершения операции
-    
   });
 }
 function uberComments(e) {
   if (e.target.classList.contains("comment")) {
     let id = Number(e.target.id);
     let com = comments.find((comment) => comment.id === id);
-    let text = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`
+    let text = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`;
     commentInput.value = text;
-    valueInputText =  text;
+    valueInputText = text;
   }
   return;
 }
@@ -284,7 +288,7 @@ function renderComments() {
     </li>`;
   });
 
-// --------------------------------- Обновление слушателей -----------------------------------------------------
+  // --------------------------------- Обновление слушателей -----------------------------------------------------
   document
     .querySelectorAll(".btn-edit")
     .forEach((btnEdit) => btnEdit.addEventListener("click", editComment));
@@ -298,7 +302,6 @@ function renderComments() {
     .querySelectorAll(".comment")
     .forEach((comment) => comment.addEventListener("click", uberComments));
 }
-
 
 // ------------------------------------ / Обновление слушателей -----------------------------------------------------
 // ------------------------------------ / Рендер списка комментариев ------------------------------------------------
@@ -325,5 +328,4 @@ addFormButton.addEventListener("click", function (event) {
   renderComments();
 });
 
-// ------------------------------------ / Слушатели ------------------------------------------------------------------      
-
+// ------------------------------------ / Слушатели ------------------------------------------------------------------
