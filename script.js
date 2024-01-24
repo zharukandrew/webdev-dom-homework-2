@@ -14,7 +14,6 @@ let valueInputText = "";
 let isLoad = false;
 // --------------------------------- // Переменные --------------------------------------------------------
 
-
 // -------------------------------- Вспомогательные функции --------------------------------------------
 function showForm (flag) {
    if (flag) {
@@ -41,12 +40,23 @@ function clearForm() {
 }
 
 
+// function getCurrentDate() {
+//   const currentDate = new Date();
+//   return `${currentDate.getDate()}.${
+//     currentDate.getMonth() + 1
+//   }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+// }
 function getCurrentDate() {
   const currentDate = new Date();
-  return `${currentDate.getDate()}.${
-    currentDate.getMonth() + 1
-  }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-}
+  return currentDate.toLocaleString('ru-RU', {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric'
+  })};
+
+
 
 function getSafeHtmlString(inputStr) {
   return inputStr
@@ -56,23 +66,28 @@ function getSafeHtmlString(inputStr) {
     .replaceAll('"', "&quot;");
 }
 
-
 function validationForm() {
-  if (valueInputName.trim() !== "" || valueInputText.trim() !== "") {
+  if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
     addFormButton.disabled = false;
     addFormButton.classList.remove("grey");
   } else {
     disabledBtn();
   }
 }
+function delay(time){
+  return new Promise((resolve,rejected) => {
+    setTimeout(() => {
+      resolve()
+    },time)
+  })
+}
 // -------------------------------- / Вспомогательные функции --------------------------------------------
 
-
 // --------------------------------- Запросы -------------------------------------------------------------
-const getData = async () => {
-  isLoad = true
-  showForm(isLoad)
 
+const getData = async () => {
+  isLoad = true;
+  showForm(isLoad);
   try {
     let response = await fetch(
       "https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments",
@@ -83,7 +98,10 @@ const getData = async () => {
         },
       }
     );
-    if (response.ok) {
+    if (!response.ok) {
+      
+      
+    } else {
       response.json().then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
           return {
@@ -96,37 +114,36 @@ const getData = async () => {
             liked: comment.isLiked,
           };
         });
-
         comments = appComments;
         renderComments();
-
-        isLoad = false
-        showForm(isLoad)
-    
+        isLoad = false;
+        showForm(isLoad);
       });
-    } else {
-      console.error("Error adding comment:", response.status);
     }
   } catch (error) {
     console.error("Error adding comment:", error);
   }
 };
+
 getData();
+
+
 // --------------------------------- //Запросы -------------------------------------------------------------
 
-
 // ---------------------------------- Логика по работе с комментариями ---------------------------------------
+
 function addComment() {
-  if (valueInputName.trim() !== "" || valueInputText.trim() !== "") {
+  if (valueInputName.trim() !== "" & valueInputText.trim() !== "") {
     const newComment = {
       id: Date.now(),
-      date: getCurrentDate(),
+      date: getCurrentDate(new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })),
       name: getSafeHtmlString(valueInputName),
       text: getSafeHtmlString(valueInputText),
       isEdit: false,
       likes: 0,
       liked: false,
     };
+   
 //----------------------------------Запрос--------------------------------------
     fetch("https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments", {
       method: "POST",
@@ -135,22 +152,20 @@ function addComment() {
       },
       body: JSON.stringify(newComment),
     })
-
     // Simulate a delay of 2 seconds before calling getData()
-    .then(response => {
+    .then((response) => {
       // Обработка результата post-запроса
       // Выполнение действий после успешного запроса
       getData();
     })
-    .catch(error => {
+    .catch((error) => {
       // Обработка ошибки post-запроса
+      console.log('Error')
     });
-
     clearForm();
     disabledBtn();
   }
 }
-
 function editComment(e) {
   e.stopPropagation();
   let id = Number(e.target.id);
@@ -178,26 +193,37 @@ function saveComment(e) {
   renderComments();
 }
 
+
 function likesComment(e) {
   e.stopPropagation();
   let id = parseInt(e.target.id);
-  comments = comments.map((comment) => {
-    if (comment.id === id && comment.liked === false) {
-      return { ...comment, liked: !comment.liked, likes: 1 };
-    } else if (comment.id === id && comment.liked === true) {
-      return { ...comment, liked: !comment.liked, likes: 0 };
-    } else {
-      return comment;
-    }
-  });
-  renderComments();
-}
+  const likeButton = e.target;
+  // Добавляем класс анимации только на момент отправки лайка
+  likeButton.classList.toggle('animated');
 
+  delay(1000).then(() => {
+    comments = comments.map((comment) => {
+      if (comment.id === id && comment.liked === false) {
+        return { ...comment, liked: !comment.liked, likes: 1 };
+      } else if (comment.id === id && comment.liked === true) {
+        return { ...comment, liked: !comment.liked, likes: 0 };
+      } else {
+        return comment;
+      }
+    });
+    renderComments();
+
+    // Удаляем класс анимации после завершения операции
+    
+  });
+}
 function uberComments(e) {
   if (e.target.classList.contains("comment")) {
     let id = Number(e.target.id);
     let com = comments.find((comment) => comment.id === id);
-    commentInput.value = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`;
+    let text = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`
+    commentInput.value = text;
+    valueInputText =  text;
   }
   return;
 }
@@ -214,8 +240,8 @@ function handleEnterKey(e) {
     addComment();
   }
 }
-// ---------------------------------- / Логика по работе с комментариями ---------------------------------------
 
+// ---------------------------------- / Логика по работе с комментариями ---------------------------------------
 
 // ------------------------------------ Рендер списка комментариев -------------------------------------------
 function renderComments() {
@@ -272,25 +298,32 @@ function renderComments() {
     .querySelectorAll(".comment")
     .forEach((comment) => comment.addEventListener("click", uberComments));
 }
+
+
 // ------------------------------------ / Обновление слушателей -----------------------------------------------------
 // ------------------------------------ / Рендер списка комментариев ------------------------------------------------
-
 
 // ------------------------------------ Слушатели ------------------------------------------------------------------
 addFormButton.addEventListener("click", addComment);
 form.addEventListener("keyup", handleEnterKey);
 buttonDelete.addEventListener("click", deleteComment);
-nameInput.addEventListener("input", (e) => {
+
+const handleNameInput = (e) => {
   valueInputName = e.target.value;
   validationForm();
-});
-commentInput.addEventListener("input", (e) => {
+};
+
+const handleCommentInput = (e) => {
   valueInputText = e.target.value;
   validationForm();
-});
+};
+
+nameInput.addEventListener("input", handleNameInput);
+commentInput.addEventListener("input", handleCommentInput);
 addFormButton.addEventListener("click", function (event) {
   addComment(event);
   renderComments();
 });
 
-// ------------------------------------ / Слушатели ------------------------------------------------------------------
+// ------------------------------------ / Слушатели ------------------------------------------------------------------      
+
