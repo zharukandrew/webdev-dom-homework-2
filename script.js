@@ -99,7 +99,7 @@ const getData = async () => {
       }
     );
     if (!response.ok) {
-      throw new Error("ошибка");
+      throw new Error(response.statusText);
     }
     let responseData = await response.json();
     const appComments = responseData.comments.map((comment) => {
@@ -124,53 +124,52 @@ const getData = async () => {
 
 getData();
 
-function PostComment(newComment) {
-    fetch("https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/activity+json",
-      },
-      body: JSON.stringify(newComment),
-    })
-      .then((response) => {
-        if (response.status === 400) {
-          throw new Error("Данные должны быть не короче 3 символов");
-        }
-        if (response.status === 500) {
-          throw new Error("Упал сервер");
-        }
-        clearForm();
-        disabledBtn();
-        getData();
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  }
-  
 
+function PostComment(newComment) {
+  fetch("https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/activity+json",
+    },
+    body: JSON.stringify({ ...newComment, forceError: true }),
+  })
+    .then((response) => {
+      if (response.status === 400) {
+        alert("Данные должны быть не короче 3 символов");
+        return;
+      }
+      if (response.status === 500) {
+        alert("Упал сервер");
+        return;
+      }
+      clearForm();
+      disabledBtn();
+      getData();
+    })
+    .catch((error) => {
+      alert(error,"Failed to submit comment. Please check your internet connection.");
+      
+    });
+}
 // --------------------------------- //Запросы -------------------------------------------------------------
 
 // ---------------------------------- Логика по работе с комментариями ---------------------------------------
 
 
 function addComment() {
-    if ((valueInputName.trim() !== "") & (valueInputText.trim() !== "")) {
-      const newComment = {
-        id: Date.now(),
-        date: getCurrentDate(),
-        name: getSafeHtmlString(valueInputName),
-        text: getSafeHtmlString(valueInputText),
-        isEdit: false,
-        likes: 0,
-        liked: false,
-      };
-      PostComment(newComment);
-      clearForm();
-      disabledBtn();
-      getData();
-    }
+  if ((valueInputName.trim() !== "") & (valueInputText.trim() !== "")) {
+    const newComment = {
+      id: Date.now(),
+      date: getCurrentDate(),
+      name: getSafeHtmlString(valueInputName),
+      text: getSafeHtmlString(valueInputText),
+      isEdit: false,
+      likes: 0,
+      liked: false,
+    };
+    PostComment(newComment);
   }
+}
 
 function editComment(e) {
   e.stopPropagation();
