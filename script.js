@@ -131,7 +131,7 @@ function PostComment(newComment) {
     headers: {
       "Content-Type": "application/activity+json",
     },
-    body: JSON.stringify({ ...newComment, forceError: true }),
+    body: JSON.stringify({ name: newComment.name, text: newComment.text, forceError: true }),
   })
     .then((response) => {
       if (response.status === 400) {
@@ -147,8 +147,7 @@ function PostComment(newComment) {
       getData();
     })
     .catch((error) => {
-      alert(error,"Failed to submit comment. Please check your internet connection.");
-      
+      alert("Неполадки с интернетом. Пожалуйста, проверьте соединение.", error);
     });
 }
 // --------------------------------- //Запросы -------------------------------------------------------------
@@ -326,5 +325,9 @@ addFormButton.addEventListener("click", function (event) {
   addComment(event);
   renderComments();
 });
+buttonDelete.addEventListener("click", deleteComment);
 
 // ------------------------------------ / Слушатели ------------------------------------------------------------------
+
+
+
