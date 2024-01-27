@@ -99,7 +99,8 @@ const getData = async () => {
       }
     );
     if (!response.ok) {
-      throw new Error(response.statusText);
+      alert(`Ошибка при получении данных, статус: ${response.statusText}`);
+      return
     }
     let responseData = await response.json();
     const appComments = responseData.comments.map((comment) => {
@@ -118,7 +119,7 @@ const getData = async () => {
     isLoad = false;
     showForm(isLoad);
   } catch (error) {
-    console.error("Error adding comment:", error);
+    alert(`Error adding comment: ${error}` );
   }
 };
 
