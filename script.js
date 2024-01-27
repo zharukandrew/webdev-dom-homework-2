@@ -322,10 +322,7 @@ const handleCommentInput = (e) => {
 
 nameInput.addEventListener("input", handleNameInput);
 commentInput.addEventListener("input", handleCommentInput);
-addFormButton.addEventListener("click", function (event) {
-  addComment(event);
-  renderComments();
-});
+addFormButton.addEventListener("click", addComment);
 buttonDelete.addEventListener("click", deleteComment);
 
 // ------------------------------------ / Слушатели ------------------------------------------------------------------
