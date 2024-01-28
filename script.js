@@ -140,7 +140,7 @@ function PostComment(newComment) {
         return;
       }
       if (response.status === 500) {
-        alert("Упал сервер");
+        alert("Проблема с интернетом .Упал сервер");
         return;
       }
       clearForm();
