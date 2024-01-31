@@ -72,4 +72,4 @@ const getData = async () => {
       });
   }
 
-  export { getData, PostComment, comments }
+  export { getData, PostComment }
