@@ -1,14 +1,10 @@
-//ссылки запросы
-import{getData ,PostComment}from'./api.js';
-getData();
-import { renderComments } from './renderComments.js'
-
-//ссылки
+import { getData, PostComment } from "./API/requests.js";
+import { renderComments } from "./js/render.js";
+import { comments } from "./js/localData.js";
 // --------------------------------- Переменные --------------------------------------------------------
-let comments = [];
+
 const addFormButton = document.querySelector(".add-form-button");
 const buttonDelete = document.querySelector(".add-form-buttondelete");
-
 const nameInput = document.querySelector(".add-form-name");
 const commentInput = document.querySelector(".add-form-text");
 const form = document.querySelector(".add-form");
@@ -17,11 +13,11 @@ const gif = document.querySelector(".gif");
 let valueInputName = "";
 let valueInputText = "";
 
-// let isLoad = false;
+
 // --------------------------------- // Переменные --------------------------------------------------------
 
 // -------------------------------- Вспомогательные функции --------------------------------------------
-export function showForm(flag) {
+function showForm(flag) {
   if (flag) {
     gif.classList.add("gif_gif-show");
     form.classList.add("form-add_form-add-none");
@@ -38,7 +34,7 @@ function disabledBtn() {
 
 disabledBtn();
 
-export function clearForm() {
+function clearForm() {
   nameInput.value = "";
   commentInput.value = "";
   valueInputName = "";
@@ -52,7 +48,7 @@ function getCurrentDate() {
   }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 }
 
-export function formDate(data) {
+function formDate(data) {
   return new Date(data)
     .toLocaleString("ru-RU", {
       day: "numeric",
@@ -89,11 +85,15 @@ function delay(time) {
 }
 // -------------------------------- / Вспомогательные функции --------------------------------------------
 
+// --------------------------------- Запросы -------------------------------------------------------------
+
+getData();
+
+// --------------------------------- //Запросы -------------------------------------------------------------
 
 // ---------------------------------- Логика по работе с комментариями ---------------------------------------
 
-
- export function addComment() {
+function addComment() {
   if ((valueInputName.trim() !== "") & (valueInputText.trim() !== "")) {
     const newComment = {
       id: Date.now(),
@@ -108,21 +108,23 @@ function delay(time) {
   }
 }
 
-export function editComment(e) {
+function editComment(e) {
+  console.log('edit')
   e.stopPropagation();
   let id = Number(e.target.id);
-  comments = comments.map((comment) =>
+  let changeArr = comments.get().map((comment) =>
     comment.id === id ? { ...comment, isEdit: !comment.isEdit } : comment
   );
+  comments.set(changeArr)
   renderComments();
 }
 
-export function saveComment(e) {
+function saveComment(e) {
   e.stopPropagation();
   let id = Number(e.target.id);
   let updatedName = document.querySelector(`input[id="${id}"]`).value;
   let updatedText = document.querySelector(`textarea[id="${id}"]`).value;
-  comments = comments.map((comment) =>
+  let changeArr = comments.get().map((comment) =>
     comment.id === id
       ? {
           ...comment,
@@ -132,10 +134,11 @@ export function saveComment(e) {
         }
       : comment
   );
+  comments.set(changeArr)
   renderComments();
 }
 
-export function likesComment(e) {
+function likesComment(e) {
   e.stopPropagation();
   let id = parseInt(e.target.id);
   const likeButton = e.target;
@@ -143,7 +146,7 @@ export function likesComment(e) {
   likeButton.classList.toggle("animated");
 
   delay(1000).then(() => {
-    comments = comments.map((comment) => {
+    let changeArr = comments.get().map((comment) => {
       if (comment.id === id && comment.liked === false) {
         return { ...comment, liked: !comment.liked, likes: 1 };
       } else if (comment.id === id && comment.liked === true) {
@@ -152,6 +155,7 @@ export function likesComment(e) {
         return comment;
       }
     });
+    comments.set(changeArr)
     renderComments();
 
     // Удаляем класс анимации после завершения операции
@@ -160,7 +164,7 @@ export function likesComment(e) {
 function uberComments(e) {
   if (e.target.classList.contains("comment")) {
     let id = Number(e.target.id);
-    let com = comments.find((comment) => comment.id === id);
+    let com = comments.get().find((comment) => comment.id === id);
     let text = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`;
     commentInput.value = text;
     valueInputText = text;
@@ -171,7 +175,7 @@ document.querySelectorAll(".comment").forEach((comment) => {
   comment.addEventListener("click", uberComments);
 });
 function deleteComment() {
-  comments.pop();
+  comments.delete();
   renderComments();
 }
 
@@ -181,10 +185,8 @@ function handleEnterKey(e) {
   }
 }
 
-// // ---------------------------------- / Логика по работе с комментариями ---------------------------------------
+// ---------------------------------- / Логика по работе с комментариями ---------------------------------------
 
-
-// // ------------------------------------ / Рендер списка комментариев ------------------------------------------------
 
 // ------------------------------------ Слушатели ------------------------------------------------------------------
 addFormButton.addEventListener("click", addComment);
@@ -203,13 +205,9 @@ const handleCommentInput = (e) => {
 
 nameInput.addEventListener("input", handleNameInput);
 commentInput.addEventListener("input", handleCommentInput);
-addFormButton.addEventListener
-
-
-("click", addComment);
+addFormButton.addEventListener("click", addComment);
 buttonDelete.addEventListener("click", deleteComment);
 
 // ------------------------------------ / Слушатели ------------------------------------------------------------------
 
-
-
+export { showForm,  formDate, clearForm, disabledBtn, editComment, saveComment, likesComment, uberComments }

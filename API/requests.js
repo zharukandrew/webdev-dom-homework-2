@@ -1,8 +1,12 @@
-import { showForm, clearForm, formDate, addComment, editComment, saveComment, likesComment } from './script.js';
-
+import { showForm, formDate, clearForm, disabledBtn } from '../script.js'
+import { renderComments } from '../js/render.js';
+import { comments } from '../js/localData.js';
 
 let isLoad = false;
-export const getData = async () => {
+
+
+
+const getData = async () => {
     isLoad = true;
     showForm(isLoad);
     try {
@@ -20,7 +24,7 @@ export const getData = async () => {
         return
       }
       let responseData = await response.json();
-      const appComments = responseData.comments.map((comment) => {
+      let appComments = responseData.comments.map((comment) => {
         return {
           id: comment.id,
           date: formDate(comment.date),
@@ -31,7 +35,7 @@ export const getData = async () => {
           liked: comment.isLiked,
         };
       });
-      comments = appComments;
+      comments.set(appComments);
       renderComments();
       isLoad = false;
       showForm(isLoad);
@@ -39,11 +43,10 @@ export const getData = async () => {
       alert(`Error adding comment: ${error}` );
     }
   };
-  
-  
-  
 
-  export function PostComment(newComment) {
+
+  
+  function PostComment(newComment) {
     fetch("https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments", {
       method: "POST",
       headers: {
@@ -67,4 +70,6 @@ export const getData = async () => {
       .catch((error) => {
         alert("Неполадки с интернетом. Пожалуйста, проверьте соединение.", error);
       });
-  }  
+  }
+
+  export { getData, PostComment, comments }

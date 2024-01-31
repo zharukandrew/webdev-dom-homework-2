@@ -1,10 +1,13 @@
-// ------------------------------------ Рендер списка комментариев -------------------------------------------
-const commentsList = document.querySelector(".comments");
-import { editComment, saveComment, likesComment } from './script.js';
+import { comments }from "../js/localData.js";
+import { editComment, saveComment, likesComment, uberComments } from "../script.js"
 
-export function renderComments() {
+const commentsList = document.querySelector(".comments");
+
+
+// ------------------------------------ Рендер списка комментариев -------------------------------------------
+function renderComments() {
     commentsList.innerHTML = "";
-    comments.forEach((comment) => {
+    comments.get().forEach((comment) => {
       commentsList.innerHTML += `
       <li class="comment" id=${comment.id}>
         <div class="comment-header">
@@ -41,6 +44,7 @@ export function renderComments() {
         </div>
       </li>`;
     });
+    // ------------------------------------ / Рендер списка комментариев ------------------------------------------------
   
     // --------------------------------- Обновление слушателей -----------------------------------------------------
     document
@@ -55,7 +59,7 @@ export function renderComments() {
     document
       .querySelectorAll(".comment")
       .forEach((comment) => comment.addEventListener("click", uberComments));
+      
+   // ------------------------------------ / Обновление слушателей -----------------------------------------------------
   }
-  
-  // ------------------------------------ / Обновление слушателей -----------------------------------------------------
-  // ------------------------------------ / Рендер списка комментариев ------------------------------------------------
+export { renderComments }
