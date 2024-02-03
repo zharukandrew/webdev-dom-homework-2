@@ -1,6 +1,7 @@
 import { comments }from "../js/localData.js";
 import { editComment, saveComment, likesComment, uberComments } from "../script.js"
 
+
 const commentsList = document.querySelector(".comments");
 
 
