@@ -1,15 +1,26 @@
-import { showForm, formDate, clearForm, disabledBtn } from '../script.js'
+import { formDate, clearForm } from '../script.js'
 import { renderComments } from '../js/render.js';
 import { comments } from '../js/localData.js';
 
 let isLoad = false;
-let token = `Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k`
+
+let loginToken = {
+  token: null,
+  get: function () {
+    return this.token
+  },
+  set: function (newValue) {
+    this.token = newValue;
+  }
+}
+
+
 const host = "https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments";
 
  
 const getData = async () => {
     isLoad = true;
-    showForm(isLoad);
+    // showForm(isLoad);
     try {
       let response = await fetch(
         host,
@@ -17,7 +28,7 @@ const getData = async () => {
           method: "GET",
           headers: {
             "Content-Type": "application/activity+json",
-            Authorization:token,
+            Authorization: loginToken.get(),
           },
         }
       );
@@ -40,7 +51,7 @@ const getData = async () => {
       comments.set(appComments);
       renderComments();
       isLoad = false;
-      showForm(isLoad);
+      // showForm(isLoad);
     } catch (error) {
       alert(`Error adding comment: ${error}` );
     }
@@ -69,7 +80,7 @@ const getData = async () => {
       method: "POST",
       headers: {
         "Content-Type": "application/activity+json",
-        Authorization:token,
+        Authorization: loginToken.get(),
       },
       body: JSON.stringify({ name: newComment.name, text: newComment.text,forceError: true }),
     })
@@ -83,11 +94,18 @@ const getData = async () => {
           return;
         }
         clearForm();
-        disabledBtn();
         getData();
       })
       .catch((error) => {
         alert("Неполадки с интернетом. Пожалуйста, проверьте соединение.", error);
       });
   }
-  export { getData, PostComment }
+
+
+  function deleteComment (id) {
+    fetch("https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments/" + id)
+  }
+
+
+
+  export { getData, PostComment, deleteComment, loginToken}

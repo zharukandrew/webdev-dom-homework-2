@@ -1,13 +1,13 @@
-import { getData, PostComment } from "./API/requests.js";
+import { getData, PostComment, deleteComment} from "./API/requests.js";
 import { renderComments } from "./js/render.js";
 import { comments } from "./js/localData.js";
 // --------------------------------- Переменные --------------------------------------------------------
 
-const addFormButton = document.querySelector(".add-form-button");
-const buttonDelete = document.querySelector(".add-form-buttondelete");
-const nameInput = document.querySelector(".add-form-name");
-const commentInput = document.querySelector(".add-form-text");
-const form = document.querySelector(".add-form");
+// const addFormButton = document.querySelector(".add-form-button");
+// const buttonDelete = document.querySelector(".add-form-buttondelete");
+// const nameInput = document.querySelector(".add-form-name");
+// const commentInput = document.querySelector(".add-form-text");
+// const form = document.querySelector(".add-form");
 const gif = document.querySelector(".gif");
 
 let valueInputName = "";
@@ -17,26 +17,24 @@ let valueInputText = "";
 // --------------------------------- // Переменные --------------------------------------------------------
 
 // -------------------------------- Вспомогательные функции --------------------------------------------
-function showForm(flag) {
-  if (flag) {
-    gif.classList.add("gif_gif-show");
-    form.classList.add("form-add_form-add-none");
-  } else {
-    gif.classList.remove("gif_gif-show");
-    form.classList.remove("form-add_form-add-none");
-  }
-}
+// function showForm(flag) {
+//   if (flag) {
+//     gif.classList.add("gif_gif-show");
+//     form.classList.add("form-add_form-add-none");
+//   } else {
+//     gif.classList.remove("gif_gif-show");
+//     form.classList.remove("form-add_form-add-none");
+//   }
+// }
 
-function disabledBtn() {
-  addFormButton.disabled = true;
-  addFormButton.classList.add("grey");
-}
+// function disabledBtn() {
+//   addFormButton.disabled = true;
+//   addFormButton.classList.add("grey");
+// }
 
-disabledBtn();
+// disabledBtn();
 
 function clearForm() {
-  nameInput.value = "";
-  commentInput.value = "";
   valueInputName = "";
   valueInputText = "";
 }
@@ -70,12 +68,13 @@ function getSafeHtmlString(inputStr) {
 
 function validationForm() {
   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
-    addFormButton.disabled = false;
-    addFormButton.classList.remove("grey");
+    document.querySelector('.add-form-button').disabled = false;
   } else {
-    disabledBtn();
+    document.querySelector('.add-form-button').disabled = true;
   }
 }
+
+
 function delay(time) {
   return new Promise((resolve, rejected) => {
     setTimeout(() => {
@@ -87,7 +86,8 @@ function delay(time) {
 
 // --------------------------------- Запросы -------------------------------------------------------------
 
-getData();
+// getData();
+renderComments()
 
 // --------------------------------- //Запросы -------------------------------------------------------------
 
@@ -111,7 +111,7 @@ function addComment() {
 function editComment(e) {
   console.log('edit')
   e.stopPropagation();
-  let id = Number(e.target.id);
+  let id = e.target.id;
   let changeArr = comments.get().map((comment) =>
     comment.id === id ? { ...comment, isEdit: !comment.isEdit } : comment
   );
@@ -121,7 +121,7 @@ function editComment(e) {
 
 function saveComment(e) {
   e.stopPropagation();
-  let id = Number(e.target.id);
+  let id = e.target.id;
   let updatedName = document.querySelector(`input[id="${id}"]`).value;
   let updatedText = document.querySelector(`textarea[id="${id}"]`).value;
   let changeArr = comments.get().map((comment) =>
@@ -140,7 +140,7 @@ function saveComment(e) {
 
 function likesComment(e) {
   e.stopPropagation();
-  let id = parseInt(e.target.id);
+  let id = e.target.id;
   const likeButton = e.target;
   // Добавляем класс анимации только на момент отправки лайка
   likeButton.classList.toggle("animated");
@@ -163,21 +163,21 @@ function likesComment(e) {
 }
 function uberComments(e) {
   if (e.target.classList.contains("comment")) {
-    let id = Number(e.target.id);
+    let id = e.target.id;
     let com = comments.get().find((comment) => comment.id === id);
     let text = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`;
-    commentInput.value = text;
+    document.querySelector(".add-form-text").value = text;
     valueInputText = text;
   }
   return;
 }
-document.querySelectorAll(".comment").forEach((comment) => {
-  comment.addEventListener("click", uberComments);
-});
-function deleteComment() {
-  comments.delete();
-  renderComments();
+
+
+function removeComment (e) {
+  let id = e.target.id
+   deleteComment(id)
 }
+
 
 function handleEnterKey(e) {
   if (e.key === "Enter") {
@@ -189,25 +189,25 @@ function handleEnterKey(e) {
 
 
 // ------------------------------------ Слушатели ------------------------------------------------------------------
-addFormButton.addEventListener("click", addComment);
-form.addEventListener("keyup", handleEnterKey);
-buttonDelete.addEventListener("click", deleteComment);
+// addFormButton.addEventListener("click", addComment);
+// form.addEventListener("keyup", handleEnterKey);
+// buttonDelete.addEventListener("click", deleteComment);
 
 const handleNameInput = (e) => {
   valueInputName = e.target.value;
   validationForm();
 };
 
-const handleCommentInput = (e) => {
+const handleTextInput = (e) => {
   valueInputText = e.target.value;
   validationForm();
 };
 
-nameInput.addEventListener("input", handleNameInput);
-commentInput.addEventListener("input", handleCommentInput);
-addFormButton.addEventListener("click", addComment);
-buttonDelete.addEventListener("click", deleteComment);
+
+// commentInput.addEventListener("input", handleCommentInput);
+// addFormButton.addEventListener("click", addComment);
+
 
 // ------------------------------------ / Слушатели ------------------------------------------------------------------
 
-export { showForm,  formDate, clearForm, disabledBtn, editComment, saveComment, likesComment, uberComments }
+export { formDate, clearForm, editComment, saveComment, likesComment, removeComment, uberComments ,addComment ,handleNameInput,handleTextInput}

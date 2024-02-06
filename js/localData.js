@@ -6,9 +6,6 @@ let comments = {
     set: function (newValue) {
         this.commentsArr = newValue
     },
-    delete: function () {
-        this.commentsArr.pop()
-    }
 };
 
 export { comments }
