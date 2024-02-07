@@ -102,10 +102,35 @@ const getData = async () => {
   }
 
 
+  // function deleteComment (id) {
+  //   fetch("https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments/" + id)
+  // }
+
   function deleteComment (id) {
-    fetch("https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments/" + id)
+    
+    fetch(("https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments/" + id), {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/activity+json",
+        Authorization: loginToken.get(),
+      },
+      body: JSON.stringify(),
+    })
+    .then((response) => {
+      if (response.status === 400) {
+        alert("Данные должны быть не короче 3 символов");
+        return;
+      }
+      if (response.status === 500) {
+        alert("Проблема с интернетом .Упал сервер");
+        return;
+      }
+      clearForm();
+      getData();
+    })
+    .catch((error) => {
+      alert("Неполадки с интернетом. Пожалуйста, проверьте соединение.", error);
+    });
   }
-
-
 
   export { getData, PostComment, deleteComment, loginToken}
