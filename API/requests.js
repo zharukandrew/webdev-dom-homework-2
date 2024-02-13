@@ -82,7 +82,7 @@ const getData = async () => {
         "Content-Type": "application/activity+json",
         Authorization: loginToken.get(),
       },
-      body: JSON.stringify({ name: newComment.name, text: newComment.text,forceError: true }),
+      body: JSON.stringify({ name: newComment.name, text: newComment.text, forceError: true }),
     })
       .then((response) => {
         if (response.status === 400) {
@@ -102,35 +102,41 @@ const getData = async () => {
   }
 
 
-  // function deleteComment (id) {
-  //   fetch("https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments/" + id)
-  // }
-
   function deleteComment (id) {
     
-    fetch(("https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments/" + id), {
+    fetch("https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments/" + id, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/activity+json",
         Authorization: loginToken.get(),
       },
-      body: JSON.stringify(),
     })
     .then((response) => {
-      if (response.status === 400) {
-        alert("Данные должны быть не короче 3 символов");
-        return;
+      if (response.ok) {
+        getData();
       }
-      if (response.status === 500) {
-        alert("Проблема с интернетом .Упал сервер");
-        return;
-      }
-      clearForm();
-      getData();
     })
     .catch((error) => {
-      alert("Неполадки с интернетом. Пожалуйста, проверьте соединение.", error);
+      alert('Что то пошло не так...');
     });
   }
 
-  export { getData, PostComment, deleteComment, loginToken}
+  // "https://webdev-hw-api.vercel.app/api/user/login"
+  // { login: 'Vasy', password: 123 }
+function loginUser(user){
+   return fetch('https://webdev-hw-api.vercel.app/api/user/login', {
+      method: "POST",
+      body: JSON.stringify(user)
+    },
+  )
+  .then((res) => {
+     if (res.status === 400) {
+       throw new Error('Не верный логин или пароль')
+     }
+     return res.json()
+  })
+  
+ 
+}
+
+export { getData, PostComment, deleteComment, loginToken, loginUser}

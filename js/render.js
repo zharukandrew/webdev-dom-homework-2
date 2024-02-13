@@ -10,28 +10,16 @@ import {
   removeComment
 } from "../script.js";
 import { getData, loginToken } from "../API/requests.js";
+import { renderLoginForm } from "../components/renderForm.js";
 
 const commentsList = document.querySelector(".comments");
 const formBox = document.querySelector(".form-wrapper");
 
 // ------------------------------------ Рендер списка комментариев -------------------------------------------
 function renderComments() {
+  
   if (!loginToken.get()) {
-    formBox.innerHTML = `<div class="registration-form">
-     <textarea type="text" class="registration-form-name" placeholder="Введите ваше имя" rows="2"></textarea>
-     <textarea type="pasword" class="registration-form-pasword" placeholder="Введите ваш пароль" rows="2"></textarea>
-     <div class="add-form-rows">
-       <button class="registration-button">Зарегистрироваться</button>
-     </div>
-   </div>`;
-    document
-      .querySelector(".registration-button")
-      .addEventListener("click", () => {
-        loginToken.set(
-          `Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k`
-        );
-        getData();
-      });
+    renderLoginForm(formBox, loginToken, getData);
     return;
   }
 

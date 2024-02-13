@@ -3,11 +3,6 @@ import { renderComments } from "./js/render.js";
 import { comments } from "./js/localData.js";
 // --------------------------------- Переменные --------------------------------------------------------
 
-// const addFormButton = document.querySelector(".add-form-button");
-// const buttonDelete = document.querySelector(".add-form-buttondelete");
-// const nameInput = document.querySelector(".add-form-name");
-// const commentInput = document.querySelector(".add-form-text");
-// const form = document.querySelector(".add-form");
 const gif = document.querySelector(".gif");
 
 let valueInputName = "";
