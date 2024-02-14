@@ -5,7 +5,7 @@ function renderLoginForm(formBox, loginToken, getData) {
 
   const renderForm = () => {
     formBox.innerHTML = `<div class="registration-form">
-    <h3>${isLoginMode ? "Вход" : "Регистрация"}</h3>
+    <h3 class ="registation__title">${isLoginMode ? "Вход" : "Регистрация"}</h3>
     <input type="text" class="registration-form-name" placeholder="Введите ваше имя" rows="2">
     ${
       isLoginMode
@@ -17,7 +17,7 @@ function renderLoginForm(formBox, loginToken, getData) {
       <button class="registration-button">${
         isLoginMode ? "Войти" : "Зарегистрироваться"
       }</button>
-      <button style="color: red;" class="registration-button-next">${
+      <button  class="registration-button-next">${
         isLoginMode ? "Перейти к регистрации" : "Перейти ко входу"
       }</button>
     </div>
