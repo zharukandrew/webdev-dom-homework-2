@@ -123,6 +123,7 @@ const getData = async () => {
 
   // "https://webdev-hw-api.vercel.app/api/user/login"
   // { login: 'Vasy', password: 123 }
+
 function loginUser(user){
    return fetch('https://webdev-hw-api.vercel.app/api/user/login', {
       method: "POST",
@@ -138,5 +139,15 @@ function loginUser(user){
   
  
 }
-
-export { getData, PostComment, deleteComment, loginToken, loginUser}
+function registerUser(user) {
+  return fetch("https://webdev-hw-api.vercel.app/api/user", {
+    method: "POST",
+    body: JSON.stringify(user),
+  }).then((response) => {
+    if (response.status === 400) {
+      throw new Error("Такой пользователь уже существует");
+    }
+   
+  });
+}
+export { getData, PostComment, deleteComment, loginToken, loginUser,registerUser}
