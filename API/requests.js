@@ -150,4 +150,7 @@ function registerUser(user) {
    
   });
 }
+
+
 export { getData, PostComment, deleteComment, loginToken, loginUser,registerUser}
+

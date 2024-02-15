@@ -8,7 +8,6 @@ const gif = document.querySelector(".gif");
 let valueInputName = "";
 let valueInputText = "";
 
-
 // --------------------------------- // Переменные --------------------------------------------------------
 
 // -------------------------------- Вспомогательные функции --------------------------------------------
@@ -68,7 +67,6 @@ function validationForm() {
     document.querySelector('.add-form-button').disabled = true;
   }
 }
-
 
 function delay(time) {
   return new Promise((resolve, rejected) => {
@@ -167,12 +165,10 @@ function uberComments(e) {
   return;
 }
 
-
 function removeComment (e) {
   let id = e.target.id
    deleteComment(id)
 }
-
 
 function handleEnterKey(e) {
   if (e.key === "Enter") {
@@ -181,7 +177,6 @@ function handleEnterKey(e) {
 }
 
 // ---------------------------------- / Логика по работе с комментариями ---------------------------------------
-
 
 // ------------------------------------ Слушатели ------------------------------------------------------------------
 // addFormButton.addEventListener("click", addComment);
@@ -198,10 +193,8 @@ const handleTextInput = (e) => {
   validationForm();
 };
 
-
 // commentInput.addEventListener("input", handleCommentInput);
 // addFormButton.addEventListener("click", addComment);
-
 
 // ------------------------------------ / Слушатели ------------------------------------------------------------------
 
