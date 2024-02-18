@@ -11,22 +11,7 @@ let valueInputText = "";
 // --------------------------------- // Переменные --------------------------------------------------------
 
 // -------------------------------- Вспомогательные функции --------------------------------------------
-// function showForm(flag) {
-//   if (flag) {
-//     gif.classList.add("gif_gif-show");
-//     form.classList.add("form-add_form-add-none");
-//   } else {
-//     gif.classList.remove("gif_gif-show");
-//     form.classList.remove("form-add_form-add-none");
-//   }
-// }
 
-// function disabledBtn() {
-//   addFormButton.disabled = true;
-//   addFormButton.classList.add("grey");
-// }
-
-// disabledBtn();
 
 function clearForm() {
   valueInputName = "";
@@ -179,9 +164,7 @@ function handleEnterKey(e) {
 // ---------------------------------- / Логика по работе с комментариями ---------------------------------------
 
 // ------------------------------------ Слушатели ------------------------------------------------------------------
-// addFormButton.addEventListener("click", addComment);
-// form.addEventListener("keyup", handleEnterKey);
-// buttonDelete.addEventListener("click", deleteComment);
+
 
 const handleNameInput = (e) => {
   valueInputName = e.target.value;
@@ -193,8 +176,7 @@ const handleTextInput = (e) => {
   validationForm();
 };
 
-// commentInput.addEventListener("input", handleCommentInput);
-// addFormButton.addEventListener("click", addComment);
+
 
 // ------------------------------------ / Слушатели ------------------------------------------------------------------
 
