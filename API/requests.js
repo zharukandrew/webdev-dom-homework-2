@@ -136,21 +136,27 @@ function loginUser(user){
      }
      return res.json()
   })
-  
- 
 }
+
+
 function registerUser(user) {
   return fetch("https://webdev-hw-api.vercel.app/api/user", {
     method: "POST",
     body: JSON.stringify(user),
-  }).then((response) => {
+  })
+  .then((response) => {
     if (response.status === 400) {
       throw new Error("Такой пользователь уже существует");
     }
-   
+    return response.json();
   });
 }
 
 
+
 export { getData, PostComment, deleteComment, loginToken, loginUser,registerUser}
+
+
+
+
 
