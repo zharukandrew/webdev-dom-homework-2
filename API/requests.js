@@ -152,9 +152,40 @@ function registerUser(user) {
   });
 }
 
+// function likesComment(e) {
+//   e.stopPropagation();
+//   let id = e.target.id;
+//   const likeButton = e.target;
+//   // Add animation class only during the like operation
+//   likeButton.classList.toggle("animated");
+//   delay(1000).then(() => {
+//     let changeArr = comments.get().map((comment) => {
+//       if (comment.id === id && comment.liked === false) {
+//         return { ...comment, liked: !comment.liked, likes: 1 };
+//       } else if (comment.id === id && comment.liked === true) {
+//         return { ...comment, liked: !comment.liked, likes: 0 };
+//       } else {
+//         return comment;
+//       }
+//     });
+//     comments.set(changeArr)
+//     renderComments();
 
+//     // Call the API to like the comment
+//     likeComment(id, loginToken.get())
+//       .then(() => {
+//         // Remove the animation class after the operation is complete
+//         likeButton.classList.remove("animated");
+//       })
+//       .catch((error) => {
+//         alert(error.message);
+//         // Remove the animation class after the operation is complete
+//         likeButton.classList.remove("animated");
+//       });
+//   });
+// }
 
-export { getData, PostComment, deleteComment, loginToken, loginUser,registerUser}
+// export { getData, PostComment, deleteComment, loginToken, loginUser,registerUser, likesComment}
 
 
 
