@@ -3,10 +3,13 @@ import { renderComments } from "./js/render.js";
 import { comments } from "./js/localData.js";
 // --------------------------------- Переменные --------------------------------------------------------
 
-const gif = document.querySelector(".gif");
+const gifLoad = document.querySelector(".gif");
+
 
 let valueInputName = "";
 let valueInputText = "";
+
+
 
 // --------------------------------- // Переменные --------------------------------------------------------
 
@@ -116,12 +119,21 @@ function saveComment(e) {
   renderComments();
 }
 
+
+function uberComments(e) {
+  if (e.target.classList.contains("comment")) {
+    let id = e.target.id;
+    let com = comments.get().find((comment) => comment.id === id);
+    let text = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`;
+    document.querySelector(".add-form-text").value = text;
+    valueInputText = text;
+  }
+  return;
+}
+
 function likesComment(e) {
   e.stopPropagation();
   let id = e.target.id;
-  const likeButton = e.target;
-  // Добавляем класс анимации только на момент отправки лайка
-  likeButton.classList.toggle("animated");
 
   delay(1000).then(() => {
     let changeArr = comments.get().map((comment) => {
@@ -135,19 +147,7 @@ function likesComment(e) {
     });
     comments.set(changeArr)
     renderComments();
-
-    // Удаляем класс анимации после завершения операции
   });
-}
-function uberComments(e) {
-  if (e.target.classList.contains("comment")) {
-    let id = e.target.id;
-    let com = comments.get().find((comment) => comment.id === id);
-    let text = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`;
-    document.querySelector(".add-form-text").value = text;
-    valueInputText = text;
-  }
-  return;
 }
 
 function removeComment (e) {
@@ -184,4 +184,4 @@ const handleTextInput = (e) => {
 
 
 
-export { formDate, clearForm, editComment, saveComment, likesComment, removeComment, uberComments ,addComment ,handleNameInput,handleTextInput}
+export { formDate, clearForm, editComment, saveComment, likesComment, removeComment, uberComments ,addComment ,handleNameInput,handleTextInput, gifLoad}

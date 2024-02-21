@@ -1,9 +1,10 @@
-import { formDate, clearForm } from '../script.js'
+import { formDate, clearForm, gifLoad } from '../script.js'
 import { renderComments } from '../js/render.js';
 import { comments } from '../js/localData.js';
 
-let isLoad = false;
 
+
+let isLoad = false;
 let loginToken = {
   token: null,
   get: function () {
@@ -19,8 +20,9 @@ const host = "https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments";
 
  
 const getData = async () => {
-    isLoad = true;
-    // showForm(isLoad);
+
+   gifLoad.style.display = "block";
+
     try {
       let response = await fetch(
         host,
@@ -49,9 +51,8 @@ const getData = async () => {
         };
       });
       comments.set(appComments);
+      gifLoad.style.display = "none";
       renderComments();
-      isLoad = false;
-      // showForm(isLoad);
     } catch (error) {
       alert(`Error adding comment: ${error}` );
     }
@@ -76,6 +77,9 @@ const getData = async () => {
   
 
   function PostComment(newComment) {
+
+    gifLoad.style.display = "block";
+    
     fetch(host, {
       method: "POST",
       headers: {
@@ -93,6 +97,8 @@ const getData = async () => {
           alert("Проблема с интернетом .Упал сервер");
           return;
         }
+        gifLoad.style.display = "none";
+    
         clearForm();
         getData();
       })
@@ -103,7 +109,7 @@ const getData = async () => {
 
 
   function deleteComment (id) {
-    
+    gifLoad.style.display = "block";
     fetch("https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments/" + id, {
       method: "DELETE",
       headers: {
@@ -113,6 +119,8 @@ const getData = async () => {
     })
     .then((response) => {
       if (response.ok) {
+        gifLoad.style.display = "none";
+    
         getData();
       }
     })
@@ -125,12 +133,15 @@ const getData = async () => {
   // { login: 'Vasy', password: 123 }
 
 function loginUser(user){
+  gifLoad.style.display = "block";
+    
    return fetch('https://webdev-hw-api.vercel.app/api/user/login', {
       method: "POST",
       body: JSON.stringify(user)
     },
   )
   .then((res) => {
+    console.log(res)
      if (res.status === 400) {
        throw new Error('Не верный логин или пароль')
      }
@@ -140,6 +151,7 @@ function loginUser(user){
 
 
 function registerUser(user) {
+  gifLoad.style.display ="block";
   return fetch("https://webdev-hw-api.vercel.app/api/user", {
     method: "POST",
     body: JSON.stringify(user),
@@ -152,40 +164,9 @@ function registerUser(user) {
   });
 }
 
-// function likesComment(e) {
-//   e.stopPropagation();
-//   let id = e.target.id;
-//   const likeButton = e.target;
-//   // Add animation class only during the like operation
-//   likeButton.classList.toggle("animated");
-//   delay(1000).then(() => {
-//     let changeArr = comments.get().map((comment) => {
-//       if (comment.id === id && comment.liked === false) {
-//         return { ...comment, liked: !comment.liked, likes: 1 };
-//       } else if (comment.id === id && comment.liked === true) {
-//         return { ...comment, liked: !comment.liked, likes: 0 };
-//       } else {
-//         return comment;
-//       }
-//     });
-//     comments.set(changeArr)
-//     renderComments();
 
-//     // Call the API to like the comment
-//     likeComment(id, loginToken.get())
-//       .then(() => {
-//         // Remove the animation class after the operation is complete
-//         likeButton.classList.remove("animated");
-//       })
-//       .catch((error) => {
-//         alert(error.message);
-//         // Remove the animation class after the operation is complete
-//         likeButton.classList.remove("animated");
-//       });
-//   });
-// }
 
-// export { getData, PostComment, deleteComment, loginToken, loginUser,registerUser, likesComment}
+export { getData, PostComment, deleteComment, loginToken, loginUser, registerUser}
 
 
 

@@ -1,6 +1,9 @@
 
+import { gifLoad } from "../script.js";
 import { loginUser, registerUser } from "../API/requests.js";
+
 function renderLoginForm(formBox, loginToken, getData) {
+  
   let isLoginMode = true;
 
   const renderForm = () => {
@@ -20,7 +23,7 @@ function renderLoginForm(formBox, loginToken, getData) {
     </div>
   </div>`;
 
-    const loader = document.querySelector('.loader');
+
 
     document.querySelector(".registration-button-next").addEventListener("click", () => {
       isLoginMode = !isLoginMode;
@@ -28,16 +31,13 @@ function renderLoginForm(formBox, loginToken, getData) {
     });
 
     document.querySelector(".registration-button").addEventListener("click", () => {
-      loader.style.display = 'block'; // Show loader
 
-      setTimeout(() => {
         if (isLoginMode) {
           let login = document.querySelector(".registration-form-name").value;
           let password = document.querySelector(".registration-form-password").value;
+
           if (!login || !password) {
             alert("Введите имя и пароль");
-            loader.style.display = 'none'; // Hide loader on error
-            return;
           }
 
           let user = {
@@ -51,21 +51,21 @@ function renderLoginForm(formBox, loginToken, getData) {
 
               // Save user data to LocalStorage
               localStorage.setItem('userData', JSON.stringify(user.user));
-
+              gifLoad.style.display = "none";
+    
               getData();
-              loader.style.display = 'none'; // Hide loader after successful login
             })
             .catch((e) => {
+              gifLoad.style.display = "none";
               alert(e.message);
-              loader.style.display = 'none'; // Hide loader on error
             });
         } else {
           let login = document.querySelector(".registration-form-name").value;
           let password = document.querySelector(".registration-form-password").value;
           let name = document.querySelector(".registration-form-email").value;
+          
           if (!login || !password || !name) {
             alert("Введите имя, логин и пароль");
-            loader.style.display = 'none'; // Hide loader on error
             return;
           }
 
@@ -81,16 +81,14 @@ function renderLoginForm(formBox, loginToken, getData) {
 
               // Save user data to LocalStorage
               localStorage.setItem('userData', JSON.stringify(user.user));
-
+              gifLoad.style.display ="none";
               getData();
-              loader.style.display = 'none'; // Hide loader after successful registration
             })
             .catch((error) => {
+              gifLoad.style.display = "none";
               alert(error.message);
-              loader.style.display = 'none'; // Hide loader on error
             });
         }
-      }, 2000); // Simulating a 2-second loading time, adjust as needed
     });
   };
 
