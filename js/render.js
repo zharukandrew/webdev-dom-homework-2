@@ -7,9 +7,8 @@ import {
   addComment,
   handleNameInput,
   handleTextInput,
-  removeComment
 } from "../script.js";
-import { getData, loginToken } from "../API/requests.js";
+import { getData, loginToken, PostLikes, deleteComment } from "../API/requests.js";
 import { renderLoginForm } from "../components/renderForm.js";
 
 const commentsList = document.querySelector(".comments");
@@ -88,7 +87,7 @@ function renderComments() {
 
   // --------------------------------- Обновление слушателей -----------------------------------------------------
   document.querySelectorAll('.comment-delete__btn').forEach((delBtn) => {
-    delBtn.addEventListener('click', removeComment)
+    delBtn.addEventListener('click', deleteComment)
   })
   document
     .querySelectorAll(".btn-edit")
@@ -98,7 +97,7 @@ function renderComments() {
     .forEach((btnSave) => btnSave.addEventListener("click", saveComment));
   document
     .querySelectorAll('[data-post-index="likeBtn"]')
-    .forEach((btn) => btn.addEventListener("click", likesComment));
+    .forEach((btn) => btn.addEventListener("click", PostLikes));
   document
     .querySelectorAll(".comment")
     .forEach((comment) => comment.addEventListener("click", uberComments));

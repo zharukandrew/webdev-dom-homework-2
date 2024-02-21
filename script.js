@@ -1,4 +1,4 @@
-import { getData, PostComment, deleteComment} from "./API/requests.js";
+import { getData, PostComment, PostLikes} from "./API/requests.js";
 import { renderComments } from "./js/render.js";
 import { comments } from "./js/localData.js";
 // --------------------------------- Переменные --------------------------------------------------------
@@ -131,29 +131,49 @@ function uberComments(e) {
   return;
 }
 
+// function likesComment(e) {
+//   e.stopPropagation();
+//   let id = e.target.id;
+
+//   delay(1000).then(() => {
+//     let changeArr = comments.get().map((comment) => {
+//       if (comment.id === id && comment.liked === false) {
+//         return { ...comment, liked: !comment.liked, likes: 1 };
+//       } else if (comment.id === id && comment.liked === true) {
+//         return { ...comment, liked: !comment.liked, likes: 0 };
+//       } else {
+//         return comment;
+//       }
+//     });
+//     comments.set(changeArr)
+//     renderComments();
+//   });
+// }
 function likesComment(e) {
   e.stopPropagation();
   let id = e.target.id;
-
   delay(1000).then(() => {
     let changeArr = comments.get().map((comment) => {
       if (comment.id === id && comment.liked === false) {
-        return { ...comment, liked: !comment.liked, likes: 1 };
+        // Update the likes in local storage
+        let updatedLikes = comment.likes + 1;
+        localStorage.setItem(`likes_${id}`, updatedLikes);
+        return { ...comment, liked: !comment.liked, likes: updatedLikes };
       } else if (comment.id === id && comment.liked === true) {
-        return { ...comment, liked: !comment.liked, likes: 0 };
+        // Update the likes in local storage
+        let updatedLikes = comment.likes - 1;
+        localStorage.setItem(`likes_${id}`, updatedLikes);
+        return { ...comment, liked: !comment.liked, likes: updatedLikes };
       } else {
         return comment;
       }
     });
-    comments.set(changeArr)
+    comments.set(changeArr);
     renderComments();
   });
 }
 
-function removeComment (e) {
-  let id = e.target.id
-   deleteComment(id)
-}
+
 
 function handleEnterKey(e) {
   if (e.key === "Enter") {
@@ -184,4 +204,4 @@ const handleTextInput = (e) => {
 
 
 
-export { formDate, clearForm, editComment, saveComment, likesComment, removeComment, uberComments ,addComment ,handleNameInput,handleTextInput, gifLoad}
+export { formDate, clearForm, editComment, saveComment, likesComment, uberComments ,addComment ,handleNameInput,handleTextInput, gifLoad}

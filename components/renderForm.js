@@ -1,6 +1,6 @@
 
-import { gifLoad } from "../script.js";
-import { loginUser, registerUser } from "../API/requests.js";
+import { gifLoad} from "../script.js";
+import { loginUser, registerUser, getData} from "../API/requests.js";
 
 function renderLoginForm(formBox, loginToken, getData) {
   
@@ -98,8 +98,9 @@ function renderLoginForm(formBox, loginToken, getData) {
     loginToken.set(`Bearer ${userData.token}`);
     getData();
   }
-
+  
   renderForm();
 }
+// const updatedLikes = localStorage.getItem(`likes_${id}`, updatedLikes);
 
 export { renderLoginForm };
