@@ -72,6 +72,7 @@ function renderComments() {
     <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
     <div class="add-form-row"></div>
       <button class="add-form-button" disabled = true>Написать</button>
+      <button class="add-form-but" >Выход</button>
     </div>
   </div>`;
 
@@ -101,7 +102,15 @@ function renderComments() {
   document
     .querySelectorAll(".comment")
     .forEach((comment) => comment.addEventListener("click", uberComments));
+    const logoutButton = document.querySelector(".add-form-but");
 
+    logoutButton.addEventListener("click", () => {
+        localStorage.clear(); // Clear localStorage
+        loginToken.set(""); // Clear the login token
+        formBox.innerHTML = ""; // Clear the form box content
+        // You may also want to redirect the user to a specific page after logout
+        // window.location.href = 'index.html'; // Redirect to index.html or any other page
+    });
   // ------------------------------------ / Обновление слушателей -----------------------------------------------------
 }
 export { renderComments };
