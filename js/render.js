@@ -18,7 +18,7 @@ const formBox = document.querySelector(".form-wrapper");
 function renderComments() {
   
   if (!loginToken.get()) {
-    renderLoginForm(formBox, loginToken, getData);
+    renderLoginForm(formBox, getData);
     return;
   }
 
@@ -105,11 +105,10 @@ function renderComments() {
     const logoutButton = document.querySelector(".add-form-but");
 
     logoutButton.addEventListener("click", () => {
-        localStorage.clear(); // Clear localStorage
-        loginToken.set(""); // Clear the login token
-        formBox.innerHTML = ""; // Clear the form box content
-        // You may also want to redirect the user to a specific page after logout
-        // window.location.href = 'index.html'; // Redirect to index.html or any other page
+        localStorage.clear();
+        loginToken.set("");
+        formBox.innerHTML = ""; 
+        window.location.reload()
     });
   // ------------------------------------ / Обновление слушателей -----------------------------------------------------
 }

@@ -2,7 +2,7 @@ import { formDate, clearForm, gifLoad } from "../script.js";
 import { renderComments } from "../js/render.js";
 import { comments } from "../js/localData.js";
 
-let isLoad = false;
+const host = "https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments";
 let loginToken = {
   token: null,
   get: function () {
@@ -13,7 +13,6 @@ let loginToken = {
   },
 };
 
-const host = "https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments";
 
 const getData = async () => {
   gifLoad.style.display = "block";
@@ -27,8 +26,7 @@ const getData = async () => {
       },
     });
     if (!response.ok) {
-      alert(`Ошибка при получении данных, статус: ${response.statusText}`);
-      return;
+      throw new Error('При получении данных произошла ошибка...');
     }
     let responseData = await response.json();
     let appComments = responseData.comments.map((comment) => {
@@ -46,25 +44,48 @@ const getData = async () => {
     gifLoad.style.display = "none";
     renderComments();
   } catch (error) {
-    alert(`Error adding comment: ${error}`);
+    gifLoad.style.display = "none";
+    alert(`${error.message}`);
   }
-  // Второй участок кода
-  return fetch(host)
-    .then((response) => {
-      if (response.status === 401) {
-        password = prompt("Введите верный пароль");
-        throw new Error("Нет авторизации");
-      }
-      return response.json();
-    })
-    .catch((error) => {
-      console.error(error);
-    });
 };
 
+
+// function PostComment(newComment) {
+//   gifLoad.style.display = "block";
+
+//   fetch(host, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/activity+json",
+//       Authorization: loginToken.get(),
+//     },
+//     body: JSON.stringify({
+//       name: newComment.name,
+//       text: newComment.text,
+//       forceError: true,
+//     }),
+//   })
+//     .then((response) => {
+//       if (response.status === 400) {
+//         throw new Error("Данные должны быть не короче 3 символов");
+//       }
+      
+//       if (response.status === 500) {
+//         throw new Error("Проблема с интернетом. Упал сервер");
+//       }
+//       gifLoad.style.display = "none";
+
+//       clearForm();
+      
+//       getData();
+//     })
+//     .catch((error) => {
+//       gifLoad.style.display = "none";
+//       alert(error.message);
+//     });
+// }
 function PostComment(newComment) {
   gifLoad.style.display = "block";
-
   fetch(host, {
     method: "POST",
     headers: {
@@ -79,23 +100,20 @@ function PostComment(newComment) {
   })
     .then((response) => {
       if (response.status === 400) {
-        alert("Данные должны быть не короче 3 символов");
-        return;
+        throw new Error("Данные должны быть не короче 3 символов");
       }
       if (response.status === 500) {
-        alert("Проблема с интернетом .Упал сервер");
-        return;
+        throw new Error("Проблема с интернетом. Упал сервер");
       }
       gifLoad.style.display = "none";
-
       clearForm();
       getData();
     })
     .catch((error) => {
-      alert("Неполадки с интернетом. Пожалуйста, проверьте соединение.", error);
+      gifLoad.style.display = "none";
+      alert(error.message);
     });
 }
-
 function deleteComment(e) {
   gifLoad.style.display = "block";
   fetch("https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments/" + e.target.id, {
@@ -106,14 +124,16 @@ function deleteComment(e) {
     },
   })
     .then((response) => {
-      if (response.ok) {
-        gifLoad.style.display = "none";
-
-        getData();
+      if (!response.ok) {
+        throw new Error('При удалени возникла ошибка')
       }
+
+      gifLoad.style.display = "none";
+      getData();
     })
     .catch((error) => {
-      alert("Что то пошло не так...");
+      gifLoad.style.display = "none";
+      alert(error.message);
     });
 }
 
@@ -123,8 +143,8 @@ function loginUser(user) {
   return fetch("https://webdev-hw-api.vercel.app/api/user/login", {
     method: "POST",
     body: JSON.stringify(user),
-  }).then((res) => {
-    console.log(res);
+  })
+  .then((res) => {
     if (res.status === 400) {
       throw new Error("Не верный логин или пароль");
     }
@@ -137,7 +157,8 @@ function registerUser(user) {
   return fetch("https://webdev-hw-api.vercel.app/api/user", {
     method: "POST",
     body: JSON.stringify(user),
-  }).then((response) => {
+  })
+  .then((response) => {
     if (response.status === 400) {
       throw new Error("Такой пользователь уже существует");
     }
@@ -147,6 +168,7 @@ function registerUser(user) {
 
 function PostLikes(e) {
   gifLoad.style.display = "block";
+
   fetch(host + `/${e.target.id}/toggle-like`, {
     method: "POST",
     headers: {
@@ -154,13 +176,19 @@ function PostLikes(e) {
       Authorization: loginToken.get(),
     },
   })
-    .then((res) => res.json())
+    .then((response) => {
+      if(!response.ok) {
+        throw new Error('Ошибка при добавлении лайка')
+      }
+       return response.json()
+    })
     .then((data) => {
       gifLoad.style.display = "none";
       getData();
     })
     .catch((error) => {
-      alert("Что то пошло не так...");
+      gifLoad.style.display = "none";
+      alert(error.message);
     });
 }
 

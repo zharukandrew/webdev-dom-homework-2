@@ -1,20 +1,16 @@
 import { getData, PostComment, PostLikes} from "./API/requests.js";
 import { renderComments } from "./js/render.js";
 import { comments } from "./js/localData.js";
+
 // --------------------------------- Переменные --------------------------------------------------------
-
 const gifLoad = document.querySelector(".gif");
-
 
 let valueInputName = "";
 let valueInputText = "";
 
-
-
 // --------------------------------- // Переменные --------------------------------------------------------
 
 // -------------------------------- Вспомогательные функции --------------------------------------------
-
 
 function clearForm() {
   valueInputName = "";
@@ -85,7 +81,9 @@ function addComment() {
       likes: 0,
       liked: false,
     };
+   
     PostComment(newComment);
+    
   }
 }
 
@@ -131,24 +129,7 @@ function uberComments(e) {
   return;
 }
 
-// function likesComment(e) {
-//   e.stopPropagation();
-//   let id = e.target.id;
 
-//   delay(1000).then(() => {
-//     let changeArr = comments.get().map((comment) => {
-//       if (comment.id === id && comment.liked === false) {
-//         return { ...comment, liked: !comment.liked, likes: 1 };
-//       } else if (comment.id === id && comment.liked === true) {
-//         return { ...comment, liked: !comment.liked, likes: 0 };
-//       } else {
-//         return comment;
-//       }
-//     });
-//     comments.set(changeArr)
-//     renderComments();
-//   });
-// }
 function likesComment(e) {
   e.stopPropagation();
   let id = e.target.id;

@@ -1,8 +1,9 @@
 
 import { gifLoad} from "../script.js";
-import { loginUser, registerUser, getData} from "../API/requests.js";
+import { loginUser, registerUser, getData, loginToken} from "../API/requests.js";
 
-function renderLoginForm(formBox, loginToken, getData) {
+
+function renderLoginForm(formBox,  getData) {
   
   let isLoginMode = true;
 
@@ -33,66 +34,14 @@ function renderLoginForm(formBox, loginToken, getData) {
     document.querySelector(".registration-button").addEventListener("click", () => {
 
         if (isLoginMode) {
-          let login = document.querySelector(".registration-form-name").value;
-          let password = document.querySelector(".registration-form-password").value;
-
-          if (!login || !password) {
-            alert("Введите имя и пароль");
-          }
-
-          let user = {
-            login: login,
-            password: password,
-          };
-
-          loginUser(user)
-            .then((user) => {
-              loginToken.set(`Bearer ${user.user.token}`);
-
-              // Save user data to LocalStorage
-              localStorage.setItem('userData', JSON.stringify(user.user));
-              gifLoad.style.display = "none";
-    
-              getData();
-            })
-            .catch((e) => {
-              gifLoad.style.display = "none";
-              alert(e.message);
-            });
+           login()
         } else {
-          let login = document.querySelector(".registration-form-name").value;
-          let password = document.querySelector(".registration-form-password").value;
-          let name = document.querySelector(".registration-form-email").value;
-          
-          if (!login || !password || !name) {
-            alert("Введите имя, логин и пароль");
-            return;
-          }
-
-          let user = {
-            login: login,
-            password: password,
-            name: name,
-          };
-
-          registerUser(user)
-            .then((user) => {
-              loginToken.set(`Bearer ${user.user.token}`);
-
-              // Save user data to LocalStorage
-              localStorage.setItem('userData', JSON.stringify(user.user));
-              gifLoad.style.display ="none";
-              getData();
-            })
-            .catch((error) => {
-              gifLoad.style.display = "none";
-              alert(error.message);
-            });
+           registration()
         }
     });
   };
 
-  // Check if user data exists in LocalStorage on page load
+
   const userData = JSON.parse(localStorage.getItem('userData'));
   if (userData) {
     loginToken.set(`Bearer ${userData.token}`);
@@ -101,6 +50,67 @@ function renderLoginForm(formBox, loginToken, getData) {
   
   renderForm();
 }
-// const updatedLikes = localStorage.getItem(`likes_${id}`, updatedLikes);
+
+
+function login () {
+  let login = document.querySelector(".registration-form-name").value;
+  let password = document.querySelector(".registration-form-password").value;
+
+  if (!login || !password) {
+    alert("Введите имя и пароль");
+  }
+
+  let user = {
+    login: login,
+    password: password,
+  };
+
+  loginUser(user)
+    .then((user) => {
+      loginToken.set(`Bearer ${user.user.token}`);
+
+      // Save user data to LocalStorage
+      localStorage.setItem('userData', JSON.stringify(user.user));
+      gifLoad.style.display = "none";
+
+      getData();
+    })
+    .catch((e) => {
+      gifLoad.style.display = "none";
+      alert(e.message);
+    });
+}
+
+function registration () {
+  let login = document.querySelector(".registration-form-name").value;
+  let password = document.querySelector(".registration-form-password").value;
+  let name = document.querySelector(".registration-form-email").value;
+  
+  if (!login || !password || !name) {
+    alert("Введите имя, логин и пароль");
+    return;
+  }
+
+  let user = {
+    login: login,
+    password: password,
+    name: name,
+  };
+
+  registerUser(user)
+    .then((user) => {
+      loginToken.set(`Bearer ${user.user.token}`);
+
+      localStorage.setItem('userData', JSON.stringify(user.user));
+      gifLoad.style.display ="none";
+      getData();
+    })
+    .catch((error) => {
+      gifLoad.style.display = "none";
+      alert(error.message);
+    });
+}
+
+
 
 export { renderLoginForm };
