@@ -50,42 +50,9 @@ const getData = async () => {
 };
 
 
-// function PostComment(newComment) {
-//   gifLoad.style.display = "block";
-
-//   fetch(host, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/activity+json",
-//       Authorization: loginToken.get(),
-//     },
-//     body: JSON.stringify({
-//       name: newComment.name,
-//       text: newComment.text,
-//       forceError: true,
-//     }),
-//   })
-//     .then((response) => {
-//       if (response.status === 400) {
-//         throw new Error("Данные должны быть не короче 3 символов");
-//       }
-      
-//       if (response.status === 500) {
-//         throw new Error("Проблема с интернетом. Упал сервер");
-//       }
-//       gifLoad.style.display = "none";
-
-//       clearForm();
-      
-//       getData();
-//     })
-//     .catch((error) => {
-//       gifLoad.style.display = "none";
-//       alert(error.message);
-//     });
-// }
 function PostComment(newComment) {
   gifLoad.style.display = "block";
+
   fetch(host, {
     method: "POST",
     headers: {
@@ -102,11 +69,14 @@ function PostComment(newComment) {
       if (response.status === 400) {
         throw new Error("Данные должны быть не короче 3 символов");
       }
+      
       if (response.status === 500) {
         throw new Error("Проблема с интернетом. Упал сервер");
       }
       gifLoad.style.display = "none";
+
       clearForm();
+      
       getData();
     })
     .catch((error) => {
@@ -114,6 +84,7 @@ function PostComment(newComment) {
       alert(error.message);
     });
 }
+
 function deleteComment(e) {
   gifLoad.style.display = "block";
   fetch("https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments/" + e.target.id, {
