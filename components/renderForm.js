@@ -2,7 +2,6 @@
 import { gifLoad} from "../script.js";
 import { loginUser, registerUser, getData, loginToken} from "../API/requests.js";
 
-
 function renderLoginForm(formBox,  getData) {
   
   let isLoginMode = true;
@@ -25,7 +24,6 @@ function renderLoginForm(formBox,  getData) {
   </div>`;
 
 
-
     document.querySelector(".registration-button-next").addEventListener("click", () => {
       isLoginMode = !isLoginMode;
       renderForm();
@@ -41,7 +39,6 @@ function renderLoginForm(formBox,  getData) {
     });
   };
 
-
   const userData = JSON.parse(localStorage.getItem('userData'));
   if (userData) {
     loginToken.set(`Bearer ${userData.token}`);
@@ -50,7 +47,6 @@ function renderLoginForm(formBox,  getData) {
   
   renderForm();
 }
-
 
 function login () {
   let login = document.querySelector(".registration-form-name").value;
@@ -112,5 +108,5 @@ function registration () {
 }
 
 
-
 export { renderLoginForm };
+
