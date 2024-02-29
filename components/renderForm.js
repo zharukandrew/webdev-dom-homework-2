@@ -52,8 +52,9 @@ function login () {
   let login = document.querySelector(".registration-form-name").value;
   let password = document.querySelector(".registration-form-password").value;
 
-  if (!login || !password) {
+  if (!login.trim() || !password.trim()) {
     alert("Введите имя и пароль");
+    return
   }
 
   let user = {
@@ -64,8 +65,6 @@ function login () {
   loginUser(user)
     .then((user) => {
       loginToken.set(`Bearer ${user.user.token}`);
-
-      // Save user data to LocalStorage
       localStorage.setItem('userData', JSON.stringify(user.user));
       gifLoad.style.display = "none";
 
@@ -82,7 +81,7 @@ function registration () {
   let password = document.querySelector(".registration-form-password").value;
   let name = document.querySelector(".registration-form-email").value;
   
-  if (!login || !password || !name) {
+  if (!login.trim() || !password.trim() || !name.trim()) {
     alert("Введите имя, логин и пароль");
     return;
   }

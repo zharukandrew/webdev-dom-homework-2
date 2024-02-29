@@ -8,7 +8,12 @@ import {
   handleNameInput,
   handleTextInput,
 } from "../script.js";
-import { getData, loginToken, PostLikes, deleteComment } from "../API/requests.js";
+import {
+  getData,
+  loginToken,
+  PostLikes,
+  deleteComment,
+} from "../API/requests.js";
 import { renderLoginForm } from "../components/renderForm.js";
 
 const commentsList = document.querySelector(".comments");
@@ -16,10 +21,8 @@ const formBox = document.querySelector(".form-wrapper");
 
 // ------------------------------------ Рендер списка комментариев -------------------------------------------
 function renderComments() {
-  
   if (!loginToken.get()) {
     renderLoginForm(formBox, getData);
-    return;
   }
 
   commentsList.innerHTML = "";
@@ -66,30 +69,40 @@ function renderComments() {
       </li>`;
   });
   // ------------------------------------ / Рендер списка комментариев ------------------------------------------------
+  if (loginToken.get()) {
 
-  formBox.innerHTML = `<div class="add-form">
-    <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
-    <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
-    <div class="add-form-row"></div>
-      <button class="add-form-button" disabled = true>Написать</button>
-      <button class="add-form-but" >Выход</button>
-    </div>
-  </div>`;
+    formBox.innerHTML = `<div class="add-form">
+  <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+  <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+  <div class="add-form-row"></div>
+    <button class="add-form-button" disabled = true>Написать</button>
+    <button class="add-form-but" >Выход</button>
+  </div>
+</div>`;
 
-  document
-    .querySelector(".add-form-button")
-    .addEventListener("click", addComment);
-  document
-    .querySelector(".add-form-name")
-    .addEventListener("input", handleNameInput);
-  document
-    .querySelector(".add-form-text")
-    .addEventListener("input", handleTextInput);
+    document
+      .querySelector(".add-form-button")
+      .addEventListener("click", addComment);
+    document
+      .querySelector(".add-form-name")
+      .addEventListener("input", handleNameInput);
+    document
+      .querySelector(".add-form-text")
+      .addEventListener("input", handleTextInput);
+    document
+      .querySelector(".add-form-but")
+      .addEventListener("click", () => {
+      localStorage.clear();
+      loginToken.set("");
+      formBox.innerHTML = "";
+      window.location.reload();
+    });
+  }
 
   // --------------------------------- Обновление слушателей -----------------------------------------------------
-  document.querySelectorAll('.comment-delete__btn').forEach((delBtn) => {
-    delBtn.addEventListener('click', deleteComment)
-  })
+  document.querySelectorAll(".comment-delete__btn").forEach((delBtn) => {
+    delBtn.addEventListener("click", deleteComment);
+  });
   document
     .querySelectorAll(".btn-edit")
     .forEach((btnEdit) => btnEdit.addEventListener("click", editComment));
@@ -102,14 +115,7 @@ function renderComments() {
   document
     .querySelectorAll(".comment")
     .forEach((comment) => comment.addEventListener("click", uberComments));
-    const logoutButton = document.querySelector(".add-form-but");
 
-    logoutButton.addEventListener("click", () => {
-        localStorage.clear();
-        loginToken.set("");
-        formBox.innerHTML = ""; 
-        window.location.reload()
-    });
   // ------------------------------------ / Обновление слушателей -----------------------------------------------------
 }
 export { renderComments };
