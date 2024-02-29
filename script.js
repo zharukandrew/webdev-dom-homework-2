@@ -167,12 +167,12 @@ function handleEnterKey(e) {
 // ------------------------------------ Слушатели ------------------------------------------------------------------
 
 
-const handleNameInput = (e) => {
+function handleNameInput (e) {
   valueInputName = e.target.value;
   validationForm();
-};
+}
 
-const handleTextInput = (e) => {
+function handleTextInput (e) {
   valueInputText = e.target.value;
   validationForm();
 };

@@ -58,21 +58,17 @@ function renderComments() {
             }
           </div>
           <div class="likes">
-            <span class="likes-counter" id="${comment.id}">${
-      comment.likes
-    }</span>
-            <button class=${
-              comment.liked ? "like-button_like-button-red" : "like-button"
-            } id="${comment.id}" data-post-index="likeBtn"></button>
+            <span class="likes-counter" id="${comment.id}">${comment.likes}</span>
+            <button class=${comment.liked ? "like-button_like-button-red" : "like-button"} id="${comment.id}" data-post-index="likeBtn"></button>
           </div>
         </div>
       </li>`;
   });
   // ------------------------------------ / Рендер списка комментариев ------------------------------------------------
   if (loginToken.get()) {
-
+    const userName = JSON.parse(localStorage.getItem('userData')).login
     formBox.innerHTML = `<div class="add-form">
-  <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+  <input type="text" value=${userName} class="add-form-name" placeholder="Введите ваше имя" />
   <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
   <div class="add-form-row"></div>
     <button class="add-form-button" disabled = true>Написать</button>
