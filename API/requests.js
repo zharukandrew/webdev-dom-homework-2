@@ -160,7 +160,7 @@ function PostLikes(e) {
   })
     .then((response) => {
       if(!response.ok) {
-        throw new Error('Ошибка при добавлении лайка')
+        throw new Error('Ошибка при добавлении лайка нужно зарегистрироваться')
       }
        return response.json()
     })
