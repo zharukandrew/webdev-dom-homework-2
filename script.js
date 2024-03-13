@@ -183,6 +183,4 @@ function handleTextInput (e) {
 
 
 
-
-
 export { formDate, clearForm, editComment, saveComment, likesComment, uberComments ,addComment ,handleNameInput,handleTextInput, gifLoad}

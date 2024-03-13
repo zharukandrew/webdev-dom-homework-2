@@ -16,13 +16,27 @@ let loginToken = {
 const getData = async () => {
   gifLoad.style.display = "block";
 
-  try {
-    let response = await fetch(host, {
+  let optionRequest = null
+
+  if (!loginToken.get()) {
+      optionRequest = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/activity+json",
+        },
+      }
+  } else {
+    optionRequest = {
       method: "GET",
       headers: {
         "Content-Type": "application/activity+json",
+        Authorization: loginToken.get(),
       },
-    });
+    }
+  }
+
+  try {
+    let response = await fetch(host, optionRequest);
     if (!response.ok) {
       throw new Error('При получении данных произошла ошибка...');
     }
@@ -39,6 +53,7 @@ const getData = async () => {
       };
     });
     comments.set(appComments);
+    console.log(responseData)
     gifLoad.style.display = "none";
     renderComments();
   } catch (error) {
@@ -151,7 +166,11 @@ function PostLikes(e) {
     })
     .then((data) => {
       gifLoad.style.display = "none";
-      getData();
+      let newArr = comments.get().map((el)=> {
+       return el.id === e.target.id ? {...el, likes: data.result.likes, liked: data.result.isLiked} : el
+      })
+      comments.set(newArr)
+      renderComments()
     })
     .catch((error) => {
       gifLoad.style.display = "none";
@@ -168,4 +187,6 @@ export {
   registerUser,
   PostLikes,
 };
+
+
 

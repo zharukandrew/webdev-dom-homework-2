@@ -68,7 +68,7 @@ function renderComments() {
   if (loginToken.get()) {
     const userName = JSON.parse(localStorage.getItem('userData')).login
     formBox.innerHTML = `<div class="add-form">
-  <input type="text" value=${userName} class="add-form-name" placeholder="Введите ваше имя" />
+  <input type="text" value=${userName} class="add-form-name" placeholder=${userName} />
   <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
   <div class="add-form-row"></div>
     <button class="add-form-button" disabled = true>Написать</button>
@@ -115,3 +115,4 @@ function renderComments() {
   // ------------------------------------ / Обновление слушателей -----------------------------------------------------
 }
 export { renderComments };
+
