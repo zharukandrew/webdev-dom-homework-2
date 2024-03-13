@@ -106,21 +106,21 @@
 
 // export { renderLoginForm };
 import { loginUser, registerUser, getData, loginToken } from "../API/requests.js";
-const loginButton = document.querySelector(".login-button");
-const registrationForm = document.querySelector(".registration-form");
-const loginButtonSpan = document.querySelector(".login-button-span");
+
 function renderLoginForm(formBox, getData, gifLoad) {
   
-  
-
-
-let isLoginButtonVisible = true; // Добавляем булеву переменную для отслеживания видимости loginButton
+  const loginButton = document.querySelector(".login-button");
+const registrationForm = document.querySelector(".registration-form");
+const loginButtonSpan = document.querySelector(".login-button-span");
 
 // loginButtonSpan.addEventListener("click", () => {
 //   isLoginButtonVisible = !isLoginButtonVisible; // Переключаем значение булевой переменной
 //   loginButton.style.display = isLoginButtonVisible ? "block" : "none"; // Устанавливаем стиль видимости для loginButton
 //   registrationForm.style.display = isLoginButtonVisible ? "none" : "block"; // Устанавливаем стиль видимости для registrationForm
 // });
+let isLoginButtonVisible = true; // Добавляем булеву переменную для отслеживания видимости loginButton
+
+
 
   let isLoginMode = true;
 
