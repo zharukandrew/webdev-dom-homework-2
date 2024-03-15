@@ -76,6 +76,7 @@ function renderComments() {
   </div>
 </div>`;
 
+
     document
       .querySelector(".add-form-button")
       .addEventListener("click", addComment);
