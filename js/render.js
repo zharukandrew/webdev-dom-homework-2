@@ -2,11 +2,11 @@ import { comments } from "../js/localData.js";
 import {
   editComment,
   saveComment,
-  likesComment,
   uberComments,
   addComment,
   handleNameInput,
   handleTextInput,
+  setValueInputName,
 } from "../script.js";
 import {
   getData,
@@ -67,12 +67,13 @@ function renderComments() {
   // ------------------------------------ / Рендер списка комментариев ------------------------------------------------
   if (loginToken.get()) {
     const userName = JSON.parse(localStorage.getItem('userData')).login
+    setValueInputName(userName);
     formBox.innerHTML = `<div class="add-form">
   <input type="text" value=${userName} class="add-form-name" placeholder=${userName} />
   <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
   <div class="add-form-row"></div>
     <button class="add-form-button" disabled = true>Написать</button>
-    <button class="add-form-but" >Выход</button>
+    <button class="add-form-but">Выход</button>
   </div>
 </div>`;
 

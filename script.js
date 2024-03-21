@@ -8,6 +8,9 @@ const gifLoad = document.querySelector(".gif");
 let valueInputName = "";
 let valueInputText = "";
 
+function setValueInputName (newValue){
+  valueInputName = newValue
+}
 // --------------------------------- // Переменные --------------------------------------------------------
 
 // -------------------------------- Вспомогательные функции --------------------------------------------
@@ -183,4 +186,4 @@ function handleTextInput (e) {
 
 
 
-export { formDate, clearForm, editComment, saveComment, likesComment, uberComments ,addComment ,handleNameInput,handleTextInput, gifLoad}
+export { formDate, clearForm, editComment, saveComment, likesComment, uberComments, addComment, handleNameInput, handleTextInput, gifLoad, setValueInputName}

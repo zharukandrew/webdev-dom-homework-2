@@ -3,6 +3,8 @@ import { renderComments } from "../js/render.js";
 import { comments } from "../js/localData.js";
 
 const host = "https://wedev-api.sky.pro/api/v2/andrey-zharuck/comments";
+
+
 let loginToken = {
   token: null,
   get: function () {
@@ -12,6 +14,12 @@ let loginToken = {
     this.token = newValue;
   },
 };
+
+if(localStorage.getItem("userData")) {
+  loginToken.set(`Bearer ${JSON.parse(localStorage.getItem('userData')).token}`)
+}
+
+
 
 const getData = async () => {
   gifLoad.style.display = "block";
