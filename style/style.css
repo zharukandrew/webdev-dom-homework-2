@@ -343,3 +343,14 @@ body {
   border-bottom: 2px solid white;
 }
 
+.login__login-link{
+  padding-top: 50px;
+  cursor: grab;
+}
+.registration__title{
+  padding-left: 50px;
+  cursor: grab;
+}
+.add-form-text{
+  cursor: grab;
+}
