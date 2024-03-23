@@ -4,14 +4,20 @@ import {
   getData,
   loginToken,
 } from "../API/requests.js";
+import{
+  getSafeHtmlString,
+}from "../script.js";
 
-function renderLoginForm(formBox, getData, gifLoad) {
+function renderLoginForm(formBox, getData, commentsList) {
   let userData = JSON.parse(localStorage.getItem("userData"));
   let isLoginMode = true;
-
+  
   if (!loginToken.get()) {
     formBox.innerHTML = `<div class="login__login-link">Нужно <span class="login-link">авторизоваться</span> чтобы ставить лайки</div>`;
-    document.querySelector(".login-link").addEventListener("click", renderForm);
+    document.querySelector(".login-link").addEventListener("click", ()=>{
+      commentsList.innerHTML = "";
+      renderForm();
+    });
   }
 
   function renderForm() {
@@ -66,8 +72,8 @@ function renderLoginForm(formBox, getData, gifLoad) {
     }
 
     let user = {
-      login: login,
-      password: password,
+      login: getSafeHtmlString(login),
+      password: getSafeHtmlString(password),
     };
 
     loginUser(user)
@@ -92,9 +98,9 @@ function renderLoginForm(formBox, getData, gifLoad) {
     }
 
     let user = {
-      login: login,
-      password: password,
-      name: name,
+      login: getSafeHtmlString(login),
+      password: getSafeHtmlString(password),
+      name: getSafeHtmlString(name),
     };
 
     registerUser(user)

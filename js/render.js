@@ -7,6 +7,7 @@ import {
   handleNameInput,
   handleTextInput,
   setValueInputName,
+  
 } from "../script.js";
 import {
   getData,
@@ -22,7 +23,7 @@ const formBox = document.querySelector(".form-wrapper");
 // ------------------------------------ Рендер списка комментариев -------------------------------------------
 function renderComments() {
   if (!loginToken.get()) {
-    renderLoginForm(formBox, getData);
+    renderLoginForm(formBox, getData, commentsList);
   }
 
   commentsList.innerHTML = "";
@@ -96,6 +97,7 @@ function renderComments() {
       window.location.reload();
     });
   }
+
 
   // --------------------------------- Обновление слушателей -----------------------------------------------------
   document.querySelectorAll(".comment-delete__btn").forEach((delBtn) => {

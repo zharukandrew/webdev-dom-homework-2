@@ -122,7 +122,7 @@ function saveComment(e) {
 
 
 function uberComments(e) {
-  if (e.target.classList.contains("comment")) {
+  if (e.target.classList.contains("comment") && document.querySelector(".add-form-text")) {
     let id = e.target.id;
     let com = comments.get().find((comment) => comment.id === id);
     let text = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`;
@@ -159,11 +159,11 @@ function likesComment(e) {
 
 
 
-function handleEnterKey(e) {
-  if (e.key === "Enter") {
-    addComment();
-  }
-}
+// function handleEnterKey(e) {
+//   if (e.key === "Enter") {
+//     addComment();
+//   }
+// }
 
 // ---------------------------------- / Логика по работе с комментариями ---------------------------------------
 
@@ -186,4 +186,4 @@ function handleTextInput (e) {
 
 
 
-export { formDate, clearForm, editComment, saveComment, likesComment, uberComments, addComment, handleNameInput, handleTextInput, gifLoad, setValueInputName}
+export { formDate, clearForm, editComment, saveComment, likesComment, uberComments, addComment, handleNameInput, handleTextInput, gifLoad, setValueInputName ,getSafeHtmlString}
