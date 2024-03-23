@@ -47,12 +47,20 @@ function getSafeHtmlString(inputStr) {
     .replaceAll('"', "&quot;");
 }
 
+// function validationForm() {
+//   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
+//     document.querySelector('.add-form-button').disabled = false;
+//   } else {
+//     document.querySelector('.add-form-button').disabled = true;
+//   }
+// }
 function validationForm() {
-  if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
+  if (valueInputText.trim() !== "") {
     document.querySelector('.add-form-button').disabled = false;
   } else {
     document.querySelector('.add-form-button').disabled = true;
   }
+  document.querySelector('.add-form-name').disabled = true;
 }
 
 function delay(time) {
