@@ -1,4 +1,4 @@
-import { getData, PostComment, PostLikes} from "./API/requests.js";
+import { getData, PostComment} from "./API/requests.js";
 import { renderComments } from "./js/render.js";
 import { comments } from "./js/localData.js";
 
@@ -67,7 +67,7 @@ function delay(time) {
 // --------------------------------- Запросы -------------------------------------------------------------
 
 getData();
-renderComments()
+renderComments();
 
 // --------------------------------- //Запросы -------------------------------------------------------------
 

@@ -1,7 +1,6 @@
 import {
   loginUser,
   registerUser,
-  getData,
   loginToken,
 } from "../API/requests.js";
 import{
