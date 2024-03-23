@@ -112,6 +112,6 @@ function renderLoginForm(formBox, getData, commentsList) {
         alert(error.message);
       });
   }
-}
+} 
 
 export { renderLoginForm };
