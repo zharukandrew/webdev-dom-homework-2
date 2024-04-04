@@ -1,40 +1,21 @@
+import { getData, PostComment} from "./API/requests.js";
+import { renderComments } from "./js/render.js";
+import { comments } from "./js/localData.js";
+
 // --------------------------------- Переменные --------------------------------------------------------
-let comments = [];
-const addFormButton = document.querySelector(".add-form-button");
-const buttonDelete = document.querySelector(".add-form-buttondelete");
-const commentsList = document.querySelector(".comments");
-const nameInput = document.querySelector(".add-form-name");
-const commentInput = document.querySelector(".add-form-text");
-const form = document.querySelector(".add-form");
-const gif = document.querySelector(".gif");
+const gifLoad = document.querySelector(".gif");
 
 let valueInputName = "";
 let valueInputText = "";
 
-let isLoad = false;
+function setValueInputName (newValue){
+  valueInputName = newValue
+}
 // --------------------------------- // Переменные --------------------------------------------------------
 
 // -------------------------------- Вспомогательные функции --------------------------------------------
-function showForm(flag) {
-  if (flag) {
-    gif.classList.add("gif_gif-show");
-    form.classList.add("form-add_form-add-none");
-  } else {
-    gif.classList.remove("gif_gif-show");
-    form.classList.remove("form-add_form-add-none");
-  }
-}
-
-function disabledBtn() {
-  addFormButton.disabled = true;
-  addFormButton.classList.add("grey");
-}
-
-disabledBtn();
 
 function clearForm() {
-  nameInput.value = "";
-  commentInput.value = "";
   valueInputName = "";
   valueInputText = "";
 }
@@ -66,14 +47,22 @@ function getSafeHtmlString(inputStr) {
     .replaceAll('"', "&quot;");
 }
 
+// function validationForm() {
+//   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
+//     document.querySelector('.add-form-button').disabled = false;
+//   } else {
+//     document.querySelector('.add-form-button').disabled = true;
+//   }
+// }
 function validationForm() {
-  if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
-    addFormButton.disabled = false;
-    addFormButton.classList.remove("grey");
+  if (valueInputText.trim() !== "") {
+    document.querySelector('.add-form-button').disabled = false;
   } else {
-    disabledBtn();
+    document.querySelector('.add-form-button').disabled = true;
   }
+  document.querySelector('.add-form-name').disabled = true;
 }
+
 function delay(time) {
   return new Promise((resolve, rejected) => {
     setTimeout(() => {
@@ -85,76 +74,12 @@ function delay(time) {
 
 // --------------------------------- Запросы -------------------------------------------------------------
 
-const getData = async () => {
-  isLoad = true;
-  showForm(isLoad);
-  try {
-    let response = await fetch(
-      "https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/activity+json",
-        },
-      }
-    );
-    if (!response.ok) {
-      alert(`Ошибка при получении данных, статус: ${response.statusText}`);
-      return
-    }
-    let responseData = await response.json();
-    const appComments = responseData.comments.map((comment) => {
-      return {
-        id: comment.id,
-        date: formDate(comment.date),
-        name: comment.author.name,
-        text: comment.text,
-        isEdit: false,
-        likes: comment.likes,
-        liked: comment.isLiked,
-      };
-    });
-    comments = appComments;
-    renderComments();
-    isLoad = false;
-    showForm(isLoad);
-  } catch (error) {
-    alert(`Error adding comment: ${error}` );
-  }
-};
-
 getData();
+renderComments();
 
-
-function PostComment(newComment) {
-  fetch("https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/activity+json",
-    },
-    body: JSON.stringify({ name: newComment.name, text: newComment.text, forceError: true }),
-  })
-    .then((response) => {
-      if (response.status === 400) {
-        alert("Данные должны быть не короче 3 символов");
-        return;
-      }
-      if (response.status === 500) {
-        alert("Проблема с интернетом .Упал сервер");
-        return;
-      }
-      clearForm();
-      disabledBtn();
-      getData();
-    })
-    .catch((error) => {
-      alert("Неполадки с интернетом. Пожалуйста, проверьте соединение.", error);
-    });
-}
 // --------------------------------- //Запросы -------------------------------------------------------------
 
 // ---------------------------------- Логика по работе с комментариями ---------------------------------------
-
 
 function addComment() {
   if ((valueInputName.trim() !== "") & (valueInputText.trim() !== "")) {
@@ -167,25 +92,29 @@ function addComment() {
       likes: 0,
       liked: false,
     };
+   
     PostComment(newComment);
+    
   }
 }
 
 function editComment(e) {
+  console.log('edit')
   e.stopPropagation();
-  let id = Number(e.target.id);
-  comments = comments.map((comment) =>
+  let id = e.target.id;
+  let changeArr = comments.get().map((comment) =>
     comment.id === id ? { ...comment, isEdit: !comment.isEdit } : comment
   );
+  comments.set(changeArr)
   renderComments();
 }
 
 function saveComment(e) {
   e.stopPropagation();
-  let id = Number(e.target.id);
+  let id = e.target.id;
   let updatedName = document.querySelector(`input[id="${id}"]`).value;
   let updatedText = document.querySelector(`textarea[id="${id}"]`).value;
-  comments = comments.map((comment) =>
+  let changeArr = comments.get().map((comment) =>
     comment.id === id
       ? {
           ...comment,
@@ -195,137 +124,70 @@ function saveComment(e) {
         }
       : comment
   );
+  comments.set(changeArr)
   renderComments();
 }
 
-function likesComment(e) {
-  e.stopPropagation();
-  let id = parseInt(e.target.id);
-  const likeButton = e.target;
-  // Добавляем класс анимации только на момент отправки лайка
-  likeButton.classList.toggle("animated");
 
-  delay(1000).then(() => {
-    comments = comments.map((comment) => {
-      if (comment.id === id && comment.liked === false) {
-        return { ...comment, liked: !comment.liked, likes: 1 };
-      } else if (comment.id === id && comment.liked === true) {
-        return { ...comment, liked: !comment.liked, likes: 0 };
-      } else {
-        return comment;
-      }
-    });
-    renderComments();
-
-    // Удаляем класс анимации после завершения операции
-  });
-}
 function uberComments(e) {
-  if (e.target.classList.contains("comment")) {
-    let id = Number(e.target.id);
-    let com = comments.find((comment) => comment.id === id);
+  if (e.target.classList.contains("comment") && document.querySelector(".add-form-text")) {
+    let id = e.target.id;
+    let com = comments.get().find((comment) => comment.id === id);
     let text = `QUOTE_BEGIN${com.text} ${com.name}QUOTE_END`;
-    commentInput.value = text;
+    document.querySelector(".add-form-text").value = text;
     valueInputText = text;
   }
   return;
 }
-document.querySelectorAll(".comment").forEach((comment) => {
-  comment.addEventListener("click", uberComments);
-});
-function deleteComment() {
-  comments.pop();
-  renderComments();
+
+
+function likesComment(e) {
+  e.stopPropagation();
+  let id = e.target.id;
+  delay(1000).then(() => {
+    let changeArr = comments.get().map((comment) => {
+      if (comment.id === id && comment.liked === false) {
+        // Update the likes in local storage
+        let updatedLikes = comment.likes + 1;
+        localStorage.setItem(`likes_${id}`, updatedLikes);
+        return { ...comment, liked: !comment.liked, likes: updatedLikes };
+      } else if (comment.id === id && comment.liked === true) {
+        // Update the likes in local storage
+        let updatedLikes = comment.likes - 1;
+        localStorage.setItem(`likes_${id}`, updatedLikes);
+        return { ...comment, liked: !comment.liked, likes: updatedLikes };
+      } else {
+        return comment;
+      }
+    });
+    comments.set(changeArr);
+    renderComments();
+  });
 }
 
-function handleEnterKey(e) {
-  if (e.key === "Enter") {
-    addComment();
-  }
-}
+
+
+
 
 // ---------------------------------- / Логика по работе с комментариями ---------------------------------------
 
-// ------------------------------------ Рендер списка комментариев -------------------------------------------
-function renderComments() {
-  commentsList.innerHTML = "";
-  comments.forEach((comment) => {
-    commentsList.innerHTML += `
-    <li class="comment" id=${comment.id}>
-      <div class="comment-header">
-        ${
-          comment.isEdit
-            ? `<input value="${comment.name}" type="text" id="${comment.id}"></input>`
-            : `<div>${comment.name}</div>`
-        }
-        <div>${comment.date}</div>
-      </div>
-      <div class="comment-body">
-        ${
-          comment.isEdit
-            ? `<textarea id="${comment.id}">${comment.text}</textarea>`
-            : `<div class="comment-text">${comment.text
-                .replace("QUOTE_BEGIN", `<div class='quote'>`)
-                .replace("QUOTE_END", `</div>`)}</div>`
-        }
-      </div>
-      <div class="comment-footer">
-        <div class="btn">
-          ${
-            comment.isEdit
-              ? `<button class="btn-save" id="${comment.id}">Сохранить</button>`
-              : `<button class="btn-edit" id="${comment.id}">Редактировать</button>`
-          }
-        </div>
-        <div class="likes">
-          <span class="likes-counter" id="${comment.id}">${comment.likes}</span>
-          <button class=${
-            comment.liked ? "like-button_like-button-red" : "like-button"
-          } id="${comment.id}" data-post-index="likeBtn"></button>
-        </div>
-      </div>
-    </li>`;
-  });
-
-  // --------------------------------- Обновление слушателей -----------------------------------------------------
-  document
-    .querySelectorAll(".btn-edit")
-    .forEach((btnEdit) => btnEdit.addEventListener("click", editComment));
-  document
-    .querySelectorAll(".btn-save")
-    .forEach((btnSave) => btnSave.addEventListener("click", saveComment));
-  document
-    .querySelectorAll('[data-post-index="likeBtn"]')
-    .forEach((btn) => btn.addEventListener("click", likesComment));
-  document
-    .querySelectorAll(".comment")
-    .forEach((comment) => comment.addEventListener("click", uberComments));
-}
-
-// ------------------------------------ / Обновление слушателей -----------------------------------------------------
-// ------------------------------------ / Рендер списка комментариев ------------------------------------------------
-
 // ------------------------------------ Слушатели ------------------------------------------------------------------
-addFormButton.addEventListener("click", addComment);
-form.addEventListener("keyup", handleEnterKey);
-buttonDelete.addEventListener("click", deleteComment);
 
-const handleNameInput = (e) => {
+
+function handleNameInput (e) {
   valueInputName = e.target.value;
   validationForm();
-};
+}
 
-const handleCommentInput = (e) => {
+function handleTextInput (e) {
   valueInputText = e.target.value;
   validationForm();
 };
 
-nameInput.addEventListener("input", handleNameInput);
-commentInput.addEventListener("input", handleCommentInput);
-addFormButton.addEventListener("click", addComment);
-buttonDelete.addEventListener("click", deleteComment);
+
 
 // ------------------------------------ / Слушатели ------------------------------------------------------------------
 
 
 
+export { formDate, clearForm, editComment, saveComment, likesComment, uberComments, addComment, handleNameInput, handleTextInput, gifLoad, setValueInputName ,getSafeHtmlString}
